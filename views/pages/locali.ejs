@@ -1,15 +1,70 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <h5>Ciao</h5>
-        <h1>
-        <script>
-            
-
-        </script>
-        </h1>
+        <meta content="../img/1.ico">
+        <%- include('style');%>
+        <link rel="icon" type="image/x-icon" href="../img/1.ico" >
     </head>
     <body>
+        <div >
+        <h1  class="h1" type="text" >Book&Party</h1>
+            
+        </div>
+    <div class="center">
+        <table style="width: 100%;">
+           <tr>
+               <th>
+                   <td class="e">
+                       <%=rows[0].città%>
+                   </td>
+               </th>
+               <th>
+                   <td class="e">
+                    <%=rows[0].data%>
+                   </td>
+               </th>
+               <th>
+                    <td class="e">
+                     <%=rows[0].np%> persone
+                    </td>
+            </th>
+        </table>
+    </div>    
+    <input type="text" class="a" value="Filtri">
+        <div style="text-align: left; padding: 2px;"> <input type="text" class="b" value="<%=r[0].num%> locali trovati"> </div>
+   
+          
+           <%rows.forEach(rows=>{%>
+            <div style="padding: 2px;">
+                <table class="c">
+                        <tr>
+                            <td style="min-width: 50px; ; display: inline-block;">
+                                <img src="/../img/<%=rows.id_locale%>.jpg" >
+                            </td>
+                            <td style="min-width: 150px; display: inline-block;">
+                            <table>
+                                <tr>
+                                    <td><%=rows.nome_locale%></td>
+                                </tr>
+                                <tr>
+                                    <td><%=rows.costo%>$</td>    
+                                </tr>
+                                <tr>
+                                    <td><%=rows.nome_tipologia%> - max <%=rows.np%> persone</td>                      
+                                        
+                                </tr>
+                            </table>  
+                            </td>
+
+                        </tr>
+                </table>
+            </div>
+            <%})%>
+            
         
+        
+            
+            
+       
     </body>
 </html>

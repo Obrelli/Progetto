@@ -41,7 +41,7 @@ function formatDate(date) {
 
     return [year, month, day].join("-");
 }
-
+app.use( express.static( "views" ) );
 app.use(
     session({
         secret: "secret",
@@ -56,7 +56,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "book&party",
+    database: "book",
 });
 
 connection.connect((err) => {
@@ -82,23 +82,27 @@ app.get('/ric', async function(req,res){
   
 //ricerca locali -> sistemare con nuova tabella del DB
 app.get('/ricerca', async function(req,res){
-    con.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, costo, email, nome_tipologia, città, data, np) AS SELECT DISTINCT tipologia.id_locale, nome_locale, costo, email, nome_tipologia, città, date_disponibili, numero_massimo_persone FROM tipologia,utente_locale WHERE tipologia.id_locale=utente_locale.id_locale && città="'+req.query.città+'" && date_disponibili="'+req.query.data+'" && numero_massimo_persone="'+req.query.np+'"',(err,rows) =>{
-      con.query('SELECT DISTINCT * FROM id',(err,rows)=>{
-        con.query('SELECT DISTINCT COUNT(*) AS num FROM id', (err,r)=>{
-          if (rows[0] != undefined) {
-            rows.forEach(rows=>{
-              rows.data = formatDate(rows.data);             
-            })
-            res.render('pages/locali', {rows,r});
+    connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, costo, nome_tipologia, citta, np) AS SELECT DISTINCT tipologia.id_locale, nome_locale, costo, nome_tipologia, citta, numero_massimo_persone FROM tipologia,utente_locale WHERE tipologia.id_locale=utente_locale.id_locale && citta="'+req.query.città+'" && numero_massimo_persone<="'+req.query.np+'"',(err,rows) =>{
+        connection.query('SELECT DISTINCT * FROM id',(err,rows)=>{
+            connection.query('SELECT DISTINCT COUNT(*) AS num FROM id', (err,r)=>{
+                
+            if (rows[0] != undefined) {
+                //rows.forEach(rows=>{
+                //rows.data = formatDate(rows.data);             
+                res.render('pages/locali', {rows,r});
+            }else{
+                res.render('pages/homepage');
+            }
+            
             //res.send(r);  
-          } else {
+          /*} else {
             alert("Account non trovato!");
             console.log(rows);
-            //res.render('pages/index');
-        }
+            res.render('pages/index');*/
+        
         })  
       })
-        con.query('DROP IF EXISTS id;', (err,r)=>{
+      connection.query('DROP IF EXISTS id;', (err,r)=>{
           if(err){
   
           }else{
@@ -110,10 +114,10 @@ app.get('/ricerca', async function(req,res){
 
 //info singolo locale
 app.get('/info', (req,rec) => {
-    con.query('DROP IF EXISTS id;', (err,r)=>{
-    con.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, descrizione) AS SELECT DISTINCT tipologia.id_locale, nome_locale, descrizione FROM utente_locale WHERE utente_locale.id_locale="'+req.query.id_locale+'" && id_tipologia="'+req.query.id_tipologia+'"', (err, rows)=>{
-      con.query('SELECT DISTINCT id_locale, nome_locale, descrizione FROM id', (err,r1)=>{
-        con.query('SELECT DISTINCT tipo_servizio FROM servizi WHERE id_tipologia="'+req.query.id_tipologia+'"', (err,r2)=>{
+    connection.query('DROP IF EXISTS id;', (err,r)=>{
+        connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, descrizione) AS SELECT DISTINCT tipologia.id_locale, nome_locale, descrizione FROM utente_locale WHERE utente_locale.id_locale="'+req.query.id_locale+'" && id_tipologia="'+req.query.id_tipologia+'"', (err, rows)=>{
+            connection.query('SELECT DISTINCT id_locale, nome_locale, descrizione FROM id', (err,r1)=>{
+                connection.query('SELECT DISTINCT tipo_servizio FROM servizi WHERE id_tipologia="'+req.query.id_tipologia+'"', (err,r2)=>{
           console.log(r1,r2);
         })
       })

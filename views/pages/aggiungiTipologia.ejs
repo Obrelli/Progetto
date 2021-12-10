@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <div class="container">
+        <h1>Aggiungi Tipologia</h1>
+        <form action="/aggiungiTipologia" method="POST">
+            <div class="form-group">
+                <label for="firstName">Nome</label>
+                <input type="text" class="form-control" id="firstName" 
+                    placeholder="Inserisci il Nome" name="nome">
+            </div>
+            <div class="form-group">
+                <label for="quantita">Quantità</label>
+                <input type="text" class="form-control" id="quantita" 
+                    placeholder="Inserisci la quantità" name="quantita">
+            </div>
+            <div class="form-group">
+                <label for="costo">Costo</label>
+                <input type="text" class="form-control" id="costo" 
+                    name="costo" placeholder="Inserisci il costo">
+            </div>
+            <div class="form-group">
+                <label for="nMaxPersone">Numero massimo di persone</label>
+                <input type="text" class="form-control" id="nMaxPersone" 
+                    name="nMaxPersone" placeholder="Inserisci il numero massimo di persone">
+            </div>
+            <div class="form-group">
+                <label for="zonaAperta">Zona aperta</label>
+                <br>
+                <input type="radio" id="vero" name="zona_aperta" value="true" checked>
+                <label for="vero">Sì</label>
+                <br>
+                <input type="radio" id="falso" name="zona_aperta" value="false">
+                <label for="falso">No</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Registra</button>
+        </form>
+  <script src="scriptForm.js"></script>
+</body>
+
+</html>

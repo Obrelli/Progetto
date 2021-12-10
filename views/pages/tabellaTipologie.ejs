@@ -1,0 +1,33 @@
+<table class="table table-striped table-dark">
+    <thead class="thead-dark">
+        <tr>
+            <th>Nome</th>
+            <th>Quantità</th>
+            <th>Costo</th>
+            <th>Numero massimo persone</th>
+            <th>Zona aperta</th>
+          </tr>
+    </thead>
+    <tbody>
+        <% tipologie.forEach(tipologia=> { %>
+            <tr onclick="idTipologia('<%= tipologia.id_tipologia %>')">
+            <!-- <tr action="/modificaTipologia?id='<%= tipologia.id_tipologia %>'" value="<%= tipologia.id_tipologia %>"> -->
+                <td>
+                    <%= tipologia.nome_tipologia %>
+                </td>
+                <td>
+                    <%= tipologia.quantita %>
+                </td>
+                <td>
+                    <%= tipologia.costo %>
+                </td>
+                <td>
+                    <%= tipologia.numero_massimo_persone %>
+                </td>
+                <td>
+                    <%= tipologia.zona_aperta %>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
+  </table>

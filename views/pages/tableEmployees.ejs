@@ -1,0 +1,36 @@
+<table class="table table-striped table-dark">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Data di nascita</th>
+            <th>Email</th>
+            <th>Numero di Telefono</th>
+          </tr>
+    </thead>
+    <tbody>
+        <% employees.forEach(employee=> { %>
+            <tr>
+                <td>
+                    <%= employee.id_utente %>
+                </td>
+                <td>
+                    <%= employee.nome %>
+                </td>
+                <td>
+                    <%= employee.cognome %>
+                </td>
+                <td>
+                    <%= employee.data_di_nascita %>
+                </td>
+                <td>
+                    <%= employee.email %>
+                </td>
+                <td>
+                    <%= employee.numero_telefono %>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
+</table>

@@ -15,7 +15,7 @@ const swaggerOptions = {
     swaggerDefinition: {
         info: {
             title: "API D5 Progetto gruppo G31",
-            description: "API documentation",
+            description: "Questa pagina contiene la documentazione delle API realizzate per l'applicazione Book&Party",
             contact: {
                 name: "Gruppo G31"
             },
@@ -28,6 +28,10 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 //documentazione swagger da aggiungere
+
+
+
+
 //----------------------------------------------------
 
 function formatDate(date) {
@@ -82,7 +86,7 @@ app.get('/ric', async function(req,res){
   
 //ricerca locali -> sistemare con nuova tabella del DB
 app.get('/ricerca', async function(req,res){
-    connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, costo, nome_tipologia, citta, np) AS SELECT DISTINCT tipologia.id_locale, nome_locale, costo, nome_tipologia, citta, numero_massimo_persone FROM tipologia,utente_locale WHERE tipologia.id_locale=utente_locale.id_locale && citta="'+req.query.città+'" && numero_massimo_persone<="'+req.query.np+'"',(err,rows) =>{
+    connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, costo, nome_tipologia, citta, np) AS SELECT DISTINCT tipologia.id_locale, utente_locale.nome_locale, tipologia.costo, tipologia.nome_tipologia, utente_locale.citta, tipologia.numero_massimo_persone FROM tipologia,utente_locale WHERE tipologia.id_locale=utente_locale.id_locale && utente_locale.citta="'+req.query.città+'" && tipologia.numero_massimo_persone<="'+req.query.np+'"',(err,rows) =>{
         connection.query('SELECT DISTINCT * FROM id',(err,rows)=>{
             connection.query('SELECT DISTINCT COUNT(*) AS num FROM id', (err,r)=>{
                 
@@ -102,7 +106,7 @@ app.get('/ricerca', async function(req,res){
         
         })  
       })
-      connection.query('DROP IF EXISTS id;', (err,r)=>{
+      connection.query('DROP IF EXISTS id;', (err,r)=>{ //da spostare sotto?
           if(err){
   
           }else{
@@ -114,7 +118,7 @@ app.get('/ricerca', async function(req,res){
 
 //info singolo locale
 app.get('/info', (req,rec) => {
-    connection.query('DROP IF EXISTS id;', (err,r)=>{
+    connection.query('DROP VIEW IF EXISTS id;', (err,r)=>{
         connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, descrizione) AS SELECT DISTINCT tipologia.id_locale, nome_locale, descrizione FROM utente_locale WHERE utente_locale.id_locale="'+req.query.id_locale+'" && id_tipologia="'+req.query.id_tipologia+'"', (err, rows)=>{
             connection.query('SELECT DISTINCT id_locale, nome_locale, descrizione FROM id', (err,r1)=>{
                 connection.query('SELECT DISTINCT tipo_servizio FROM servizi WHERE id_tipologia="'+req.query.id_tipologia+'"', (err,r2)=>{
@@ -478,7 +482,31 @@ app.get("/api/utenti", (req, res) => {
     );
 });
 
-//--------------------------------------------------------------------------------------------
+/**
+* @swagger
+* 
+* 
+* /prenotazioni:
+*   get:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di visualizzare le prenotazioni dei vari clienti.
+*     parameters:
+*     - in: "session" 
+*       name: "is_locale"
+*       description: "Indica se l'account è di tipo locale o no"
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id dell'utente connesso"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazioni visualizzate correttamente"
+*
+ */
+
+
+//-------------------------------------------------------------------------------------------- UTENTE LOCALE
 //visualizzazione prenotazioni
 app.get('/prenotazioni', async function(req, res) { 
 
@@ -487,8 +515,8 @@ app.get('/prenotazioni', async function(req, res) {
     console.log(req.session.isLocale);
     connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
         if (err) throw err;
-
-       /* var i=0;  //errore con accesso a cella dell'array non esistente
+//errore con accesso a cella dell'array non esistente
+       /* var i=0;  
         while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
             console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
             prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
@@ -501,9 +529,31 @@ app.get('/prenotazioni', async function(req, res) {
     });
 })
 
+
+/**
+* @swagger
+* 
+* 
+* /prenotazioni/prenotazione_spec/:id_prenotazione:
+*   get:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di visualizzare le informazioni di una determinata prenotazione di un cliente.
+*     parameters:
+*     - in: "params" 
+*       name: "id_Prenotazione"
+*       description: "Indica l'id della prenotazione che si vuole visualizzare"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazione visualizzata correttamente"
+*
+ */
+
+//visualizzazione prenotazioni specifiche
 app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req, res) { 
 
- //visualizzazione prenotazioni specifiche   
+    
     var id_prenotazione = req.params.id_prenotazione;
     console.log(id_prenotazione); 
     connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, p.data_prenotazione, t.quantita, t.numero_massimo_persone, uc.nome, uc.cognome, uc.numero_telefono, uc.email  FROM prenotazione_tipologia_locale AS p, utente AS uc, tipologia AS t WHERE p.id_prenotazione = "${id_prenotazione}" AND t.id_tipologia = p.id_tipologia AND p.id_cliente = uc.id_utente;`,(err,prenotazione)=> {
@@ -518,12 +568,32 @@ app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req,
     });
 });
 
-//annulla prenotazioni 
+/**
+* @swagger
+* 
+* 
+* /prenotazioni/prenotazione_spec/annulla/:id_prenotazione:
+*   delete:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di eliminare una determinata prenotazione di un cliente.
+*     parameters:
+*     - in: "params" 
+*       name: "id_Prenotazione"
+*       description: "Indica l'id della prenotazione che si vuole annullare"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazione annullata correttamente"
+*
+ */
+
+//annulla prenotazioni  SE METTO APP.DELETE NON VA
 app.get('/prenotazioni/prenotazione_spec/annulla/:id_prenotazione', (req, res) => {
-    var id_prenotazione = req.params.id_prenotazione;
+   var id_prenotazione = req.params.id_prenotazione;
     console.log(id_prenotazione);
 
-   connection.query(`DELETE FROM prenotazione_tipologia_locale WHERE id_prenotazione = ?`,[id_prenotazione], (err,prenotazione)=> {
+   connection.query(`DELETE FROM prenotazione_tipologia_locale WHERE id_prenotazione = ?`,[req.params.id_prenotazione], (err,prenotazione)=> {
         if (err) throw err;
         else {
             alert("Prenotazione annullata"); //tornare all'elenco locali
@@ -532,6 +602,44 @@ app.get('/prenotazioni/prenotazione_spec/annulla/:id_prenotazione', (req, res) =
     });    
     
 }); 
+
+
+//-------------------------------------------------------------------------------------------- UTENTE GESTORE
+
+/**
+* @swagger
+* 
+* 
+* /eliminaGestore:
+*   delete:
+*     tags:  
+*     - "Gestore"  
+*     summary: Permette all'utente di tipo Gestore di eliminare il proprio account.
+*     parameters:
+*     - in: "session" 
+*       name: "isTipoGestore"
+*       description: "Indica se l'utente è un gestore o no"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Account eliminato correttamente"
+*
+ */
+
+app.get('/eliminaGestore', (req,res) => {
+    console.log("è gestore: "+req.session.isTipoGestore);
+
+    connection.query(`DELETE FROM utente WHERE isTipoGestore =1 AND id_utente = ?`,[req.session.id_utente], (err,cancellazione)=> {
+        if (err) throw err;
+        else {
+            alert("Account eliminato"); //tornare al login/ricerca senza login
+            res.redirect('../');
+        }
+    });   
+
+});
+
+
 
 app.listen(3535);
 console.log("Server is listening on port 3535");

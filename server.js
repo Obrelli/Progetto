@@ -6,27 +6,27 @@ const alert = require("alert");
 
 //----------------------------------------------------
 //api documentation
-// const swaggerJsDoc = require('swagger-jsdoc');
-// const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
-// const swaggerOptions = {
-//     swaggerDefinition: {
-//         info: {
-//             title: "API D5 Progetto gruppo G31",
-//             description: "API documentation",
-//             contact: {
-//                 name: "Gruppo G31"
-//             },
-//             servers: ["http://localhost:3535/"]
-//         }
-//     },
-//     apis: ["server.js"]
-// };
+const swaggerOptions = {
+        swaggerDefinition: {
+        info: {
+            title: "API D5 Progetto gruppo G31",
+            description: "API documentation",
+            contact: {
+                name: "Gruppo G31"
+             },
+             servers: ["http://localhost:3535/"]
+         }
+    },
+    apis: ["server.js"]
+};
 
-// const swaggerDocs = swaggerJsDoc(swaggerOptions);
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-// //documentazione swagger da aggiungere
-// //----------------------------------------------------
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+//documentazione swagger da aggiungere
+//----------------------------------------------------
 
 function formatDate(date) {
     var d = new Date(date),
@@ -54,7 +54,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "book&party",
+    database: "book",
 });
 
 connection.connect((err) => {
@@ -731,60 +731,200 @@ app.get("/api/utenti", (req, res) => {
     );
 });
 
-//--------------------------------------------------------------------------------------------
+
+/**
+* @swagger
+* 
+* 
+* /prenotazioni:
+*   get:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di visualizzare le prenotazioni dei vari clienti.
+*     parameters:
+*     - in: "session" 
+*       name: "is_locale"
+*       description: "Indica se l'account è di tipo locale o no"
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id dell'utente connesso"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazioni visualizzate correttamente"
+*
+ */
+
+
+//-------------------------------------------------------------------------------------------- UTENTE LOCALE
 //visualizzazione prenotazioni
+//risolvere problema data
 app.get('/prenotazioni', async function(req, res) { 
 
     var id_locale;
     if (req.session.isLocale == 1) id_locale = req.session.id_utente;
-    console.log(req.session.isLocale);
-    connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
-        if (err) throw err;
+        console.log(req.session.isLocale);
+        connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
+            if (err) { console.log(res.status(400)); throw err;}
+            else {
+                
+                //errore con accesso a cella dell'array non esistente
+                /* var i=0;  
+                while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
+                    console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
+                    prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
+                    
+                    i++;
+                    }*/
 
-       /* var i=0;  //errore con accesso a cella dell'array non esistente
-        while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
-            console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
-            prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
-            
-            i++;
-            }*/
-        console.log("Data received from Db:");
-        console.log(prenotazioni);
-        res.render("pages/elencoPrenotazioniLocale", { prenotazioni });
-    });
+                console.log(res.status(200));    
+                console.log("Data received from Db:");
+                console.log(prenotazioni);
+                res.render("pages/elencoPrenotazioniLocale", { prenotazioni });
+            }
+        });
 })
 
+
+/**
+* @swagger
+* 
+* 
+* /prenotazioni/prenotazione_spec/:id_prenotazione:
+*   get:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di visualizzare le informazioni di una determinata prenotazione di un cliente.
+*     parameters:
+*     - in: "params" 
+*       name: "id_Prenotazione"
+*       description: "Indica l'id della prenotazione che si vuole visualizzare"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazione visualizzata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*
+ */
+
+//visualizzazione prenotazioni specifiche
 app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req, res) { 
 
- //visualizzazione prenotazioni specifiche   
+    
     var id_prenotazione = req.params.id_prenotazione;
     console.log(id_prenotazione); 
     connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, p.data_prenotazione, t.quantita, t.numero_massimo_persone, uc.nome, uc.cognome, uc.numero_telefono, uc.email  FROM prenotazione_tipologia_locale AS p, utente AS uc, tipologia AS t WHERE p.id_prenotazione = "${id_prenotazione}" AND t.id_tipologia = p.id_tipologia AND p.id_cliente = uc.id_utente;`,(err,prenotazione)=> {
-        if (err) throw err;
+        if (err) { console.log(res.status(400)); throw err;}
+        else {
+            prenotazione[0]["data_prenotazione"] = formatDate(prenotazione[0]["data_prenotazione"] );
 
-    prenotazione[0]["data_prenotazione"] = formatDate(prenotazione[0]["data_prenotazione"] );
-
-    console.log("Data received from Db:");
-    console.log(prenotazione);
-    res.render("pages/elencoPrenotazioneSpec", { prenotazione });
-   
+            console.log(res.status(200));
+            console.log("Data received from Db:");
+            console.log(prenotazione);
+            res.render("pages/elencoPrenotazioneSpec", { prenotazione });
+        }
     });
 });
-
-//annulla prenotazioni 
-app.get('/prenotazioni/prenotazione_spec/annulla/:id_prenotazione', (req, res) => {
-    var id_prenotazione = req.params.id_prenotazione;
-    console.log(id_prenotazione);
-
-   connection.query(`DELETE FROM prenotazione_tipologia_locale WHERE id_prenotazione = ?`,[id_prenotazione], (err,prenotazione)=> {
-        if (err) throw err;
-        else {
+/**
+* @swagger 
+* 
+* /prenotazioni/prenotazione_spec/annulla/:id_prenotazione:
+*   delete:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di eliminare una determinata prenotazione di un cliente.
+*     parameters:
+*     - in: "query" 
+*       name: "id_Prenotazione"
+*       description: "Indica l'id della prenotazione che si vuole annullare"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazione annullata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+//risolvere problema data
+app.delete('/prenotazioni/prenotazione_spec/annulla/', (req, res) => {
+    var id_prenotazione = req.query.idP;
+     console.log("appdelete "+id_prenotazione);
+ 
+    connection.query(`DELETE FROM prenotazione_tipologia_locale WHERE id_prenotazione = ?`,[id_prenotazione], (err,prenotazione)=> {
+     if (err) { console.log(res.status(400)); throw err;}
+         else {
+             
             alert("Prenotazione annullata"); //tornare all'elenco locali
-            res.redirect('../../');
-        }
-    });    
+            console.log(res.status(200));
+
+            connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${req.session.id_utente}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
+                if (err) { console.log(res.status(400)); throw err;}
+                else {
+                    
+                    //errore con accesso a cella dell'array non esistente
+                    /* var i=0;  
+                    while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
+                        console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
+                        prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
+                        
+                        i++;
+                        }*/
     
-}); 
+                    console.log(res.status(200));    
+                    console.log("Data received from Db:");
+                    console.log(prenotazioni);
+                    res.render("pages/elencoPrenotazioniLocale", { prenotazioni });
+                }
+            });
+         }
+     });   
+     
+ });
+
+//-------------------------------------------------------------------------------------------- UTENTE GESTORE
+
+/**
+* @swagger
+* 
+* 
+* /eliminaGestore:
+*   delete:
+*     tags:  
+*     - "Gestore"  
+*     summary: Permette all'utente di tipo Gestore di eliminare il proprio account.
+*     parameters:
+*     - in: "session" 
+*       name: "isTipoGestore"
+*       description: "Indica se l'utente è un gestore o no"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Account eliminato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*
+*/
+//elimina gestore
+app.delete('/eliminaGestore', (req,res) => {
+    console.log("è gestore: "+req.session.isTipoGestore);
+
+    connection.query(`DELETE FROM utente WHERE isTipoGestore = 1 AND id_utente = ?`,[req.session.id_utente], (err,cancellazione)=> {
+        if (err) { console.log(res.status(400)); throw err;}
+        else {
+            res.render("pages/login");
+            alert("Account eliminato"); //tornare al login/ricerca senza login
+            //res.redirect('../../');
+            console.log(res.status(200));
+        }
+    });   
+
+});
+
+
+//render profilo utente CLIENTE/GESTORE
+app.get("/profiloUtente", function (req, res) {
+    res.render("pages/profiloUtente");
+});
 
 app.listen(3535);
 console.log("Server is listening on port 3535");

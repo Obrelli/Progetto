@@ -23,10 +23,25 @@
         <h4>Valutazione:            </h4> <b> XXX </b>
     </div>
 
-    <div>
-        <button type="submit"  method="POST" onclick="location.href='/prenotazioni/prenotazione_spec/annulla/<%= prenotazione.id_prenotazione %>'"> Annulla Prenotazione </button>
-
-       
+    <div >
+        <button onclick="eliminaPrenotazione('<%= prenotazione.id_prenotazione %>')"> Annulla Prenotazione </button>
     </div>
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script>
+      function eliminaPrenotazione(id_prenotazione){
+        url = '/prenotazioni/prenotazione_spec/annulla?idP='.concat(id_prenotazione);
+        console.log("test "+id_prenotazione);
+        $.ajax({
+          url : url,
+          method : 'delete',
+          success: function(){
+                // location.reload();
+                document.location.href = "/prenotazioni";
+            }
+        })
+       }
+    </script>
 </div> 
 <% }) %>

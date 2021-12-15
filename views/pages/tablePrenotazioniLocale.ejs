@@ -11,7 +11,7 @@
     <tbody>
         
         <% prenotazioni.forEach(prenotazioni=> { %>
-            <tr>
+            <tr onclick="location.href='/prenotazioni/prenotazione_spec/<%= prenotazioni.id_prenotazione %>'">
                 <td>
                     <%= prenotazioni.nome_tipologia %>
                 </td>
@@ -21,9 +21,7 @@
                 <td>
                     <%= prenotazioni.data_prenotazione %>
                 </td>
-                <td>
-                    <button type="submit"   method="POST" onclick="location.href='/prenotazioni/prenotazione_spec/<%= prenotazioni.id_prenotazione %>'">Visualizza</button>
-                </td>
+               
             </tr>
             <% }) %>
     </tbody>

@@ -15,6 +15,7 @@
         <h1>Informazioni</h1>
         <form action="/modificaTipologia/aggiorna" method="POST">
             <input type="hidden" class="form-control" id="id_tipologia" name="id_tipologia" value="<%=tipologia[0].id_tipologia %>">
+            <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=tipologia[0].id_locale %>">
             <div class="form-group">
                 <label for="firstName">Nome</label>
                 <input type="text" class="form-control" id="firstName" 
@@ -56,17 +57,24 @@
             <button type="submit" class="btn btn-primary">Modifica</button>
         </form>
         <br>
-        <button onclick="eliminaTipologia('<%= tipologia[0].id_tipologia %>')" class="btn btn-primary">Elimina</button>
+        <button onclick="eliminaTipologia('<%= tipologia[0].id_tipologia %>', '<%= tipologia[0].id_locale %>')" class="btn btn-primary">Elimina</button>
         <br><br>
         <button onclick="aggiungiServizi('<%= tipologia[0].id_tipologia %>')" class="btn btn-primary">Aggiungi servizi</button>
         <br><br>  
         <button onclick="elencoServizi('<%= tipologia[0].id_tipologia %>')" class="btn btn-primary">Elenco servizi</button>
     </main>
-
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script>
-    function eliminaTipologia(id_tipologia){
-        url = '/eliminaTipologia?id='.concat(id_tipologia)
-        document.location.href=url;
+    function eliminaTipologia(id_tipologia, id_locale){
+        url = '/eliminaTipologia?idT='.concat(id_tipologia).concat("&idL=").concat(id_locale)
+        $.ajax({
+          url : url,
+          method : 'delete',
+          success: function(){
+                // location.reload();
+                document.location.href = "/tipologie?id=".concat(id_locale);
+            }
+        })
     }
     function aggiungiServizi(id_tipologia){
         url = '/aggiungiServizi?id='.concat(id_tipologia)

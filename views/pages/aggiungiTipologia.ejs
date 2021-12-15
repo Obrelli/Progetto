@@ -12,6 +12,7 @@
     <div class="container">
         <h1>Aggiungi Tipologia</h1>
         <form action="/aggiungiTipologia" method="POST">
+            <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=id_locale %>">
             <div class="form-group">
                 <label for="firstName">Nome</label>
                 <input type="text" class="form-control" id="firstName" 

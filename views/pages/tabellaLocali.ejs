@@ -1,0 +1,32 @@
+<table class="table table-striped table-dark">
+    <thead class="thead-dark">
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Numero di telefono</th>
+            <th>Citta</th>
+            <th>Indirizzo</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% locali.forEach(locale=> { %>
+            <tr onclick="idLocale('<%= locale.id_locale %>')">
+                <td>
+                    <%= locale.nome_locale %>
+                </td>
+                <td>
+                    <%= locale.email %>
+                </td>
+                <td>
+                    <%= locale.numero_telefono %>
+                </td>
+                <td>
+                    <%= locale.citta %>
+                </td>
+                <td>
+                    <%= locale.indirizzo_locale %>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
+  </table>

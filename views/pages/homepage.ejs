@@ -31,11 +31,13 @@
     </div>
     
     <div class="container">
-      <button onclick="location.href='/gestioneAccount'">Gestione account</button>
-    </div>
+      <button onclick="location.href='/profiloUtente'">Profilo</button>
+  </div>
+    <% if(isGestore == 1){%>
     <div class="container">
-      <button onclick="location.href='/registrazioneLocale'">Registra Locale</button>
+      <button onclick="location.href='/locali'">Gestione locali</button>
     </div>
+    <% } %>
 </body>
 
 </html>

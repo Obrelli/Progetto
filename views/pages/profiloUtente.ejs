@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+
+    <div class="container">
+        <button onclick="location.href='/gestioneAccount'">Gestione account</button>
+    </div>
+
+    <div class="container">
+        <button onclick="location.href='/registrazioneLocale'">Registra Locale</button>
+    </div>
+
+    <% if(isGestore == 1){%>
+        <div class="container">
+            <button onclick="eliminaGestore()">Elimina Gestore</button>
+         </div>
+    <% } %>
+    
+    <script>
+        function eliminaGestore(){
+          url = '/eliminaGestore';
+          console.log("test");
+          $.ajax({
+            url : url,
+            method : 'delete',
+            success: function(){
+                  // location.reload();
+                  document.location.href = "/";
+              }
+          })
+          // document.location.href=url;
+        }
+    </script>
+  
+</body>
+</html>

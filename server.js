@@ -180,7 +180,6 @@ app.post("/prenota", urlencodedParser, (req,res)=>{
     const nome_tipologia = req.body.tip.split(' ');
     connection.query("select id_tipologia from tipologia where nome_tipologia='"+nome_tipologia[0]+"' && id_locale='"+req.body.id_locale+"'", (err,rows)=>{
         if(!err){
-            console.log(req.session.id_utente);
             connection.query("INSERT INTO prenotazione_tipologia_locale (id_locale, id_cliente, id_tipologia, data_prenotazione) VALUES ('"+req.body.id_locale+"','"+req.session.id_utente+"','"+ rows[0].id_tipologia+"','"+req.body.data+"')", (err,rows)=>{
                 if(!err){
                     

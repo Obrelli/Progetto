@@ -17,7 +17,8 @@
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.2.0"
+    "swagger-ui-express": "^4.2.0",
+    "until": "^0.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

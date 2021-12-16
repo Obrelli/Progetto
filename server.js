@@ -2,10 +2,12 @@ const express = require("express");
 var bodyParser = require("body-parser");
 const app = express();
 var session = require("express-session");
+var id_locale;
 const https = require("https");
 const http = require("http");
 const alert = require("alert");
-
+const util = require('util');
+let array = [];
 //----------------------------------------------------
 //api documentation
 const swaggerJsDoc = require('swagger-jsdoc');
@@ -51,7 +53,9 @@ app.use(
 );
 
 const mysql = require("mysql");
-const { response } = require("express");
+const { response, query } = require("express");
+const { join } = require("path");
+const { runMain } = require("module");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -79,51 +83,122 @@ app.get("/", function (req, res) {
 app.get('/ric', async function(req,res){
     res.render('pages/ricerca.ejs');
   })
+
   
 //ricerca locali -> sistemare con nuova tabella del DB
-app.get('/ricerca', async function(req,res){
-    connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, costo, nome_tipologia, citta, np) AS SELECT DISTINCT tipologia.id_locale, nome_locale, costo, nome_tipologia, citta, numero_massimo_persone FROM tipologia,utente_locale WHERE tipologia.id_locale=utente_locale.id_locale && citta="'+req.query.città+'" && numero_massimo_persone<="'+req.query.np+'"',(err,rows) =>{
-        connection.query('SELECT DISTINCT * FROM id',(err,rows)=>{
-            connection.query('SELECT DISTINCT COUNT(*) AS num FROM id', (err,r)=>{
-                
-            if (rows[0] != undefined) {
-                //rows.forEach(rows=>{
-                //rows.data = formatDate(rows.data);             
-                res.render('pages/locali', {rows,r});
-            }else{
-                res.render('pages/homepage');
-            }
+app.get('/ricerca', function(req,res){
+    connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, np, id_tipologia, nome_tipologia) AS SELECT DISTINCT utente_locale.id_locale, nome_locale, numero_massimo_persone, tipologia.id_tipologia, nome_tipologia FROM tipologia,utente_locale WHERE tipologia.id_locale=utente_locale.id_locale && citta="'+req.query.città+'" && numero_massimo_persone >= "'+req.query.np+'"',(err,rows) =>{
+        if(!err){
+            connection.query('SELECT DISTINCT nome_locale,id_locale  FROM id  WHERE (id_locale IN (SELECT DISTINCT id_locale FROM id) )', (err,rrr)=>{
+                //console.log('CREATE OR REPLACE VIEW id(id_locale, id_tipologia, nome_tipologia) AS SELECT DISTINCT utente_locale.id_locale, tipologia.id_tipologia, nome_tipologia FROM tipologia,utente_locale WHERE tipologia.id_locale=utente_locale.id_locale && citta="'+req.query.città+'" && numero_massimo_persone <= "'+req.query.np+'"');
+                connection.query('SELECT DISTINCT COUNT(*) as num FROM utente_locale  WHERE (utente_locale.id_locale IN (SELECT DISTINCT id_locale FROM id) )' , (err, n) =>{
+                    connection.query('CREATE OR REPLACE VIEW bho(id_locale, id_tipologia, nome_tipologia, tipo_servizio, id_servizi, np) AS SELECT id.id_locale, id.id_tipologia, id.nome_tipologia, tipo_servizio, id_servizi, numero_massimo_persone FROM id,tipologia,servizi WHERE (tipologia.id_locale IN (SELECT DISTINCT id_locale FROM id) );', (err,r)=>{
+                        if(!err){
+                            //connection.query('SELECT DISTINCT id_locale,nome_locale  FROM id  WHERE (id_locale IN (SELECT DISTINCT id_locale FROM id) );' ,(err,idloc)=>{
+                                //if(!err){
+                                connection.query('SELECT DISTINCT bho.id_locale, bho.nome_tipologia, bho.id_tipologia FROM bho,id WHERE (bho.id_locale IN (SELECT DISTINCT id_locale FROM id) )' ,(err,rr)=>{
+                                    connection.query('SELECT DISTINCT np, id_locale, id_tipologia FROM id' ,(err,rnp)=>{
+                                        if(!err){
+                                            connection.query("drop view bho, id;");
+                                            res.render("pages/locali", {città: req.query.città, np:req.query.np, n: n, r:r, rr:rr, idloc:rrr, rnp});     
+                                        }else{
+                                            console.log("error");
+                                        }   
+                                    })
+                                }) 
+                                /*}else{
+                                    console.log("non va un cazzo");
+                                }
+                            })*/
+                        }else{
+                            console.log("whyyyyyy???")
+                        }                     
+                    })
+                })   
+            })       
+        }else{
             
-            //res.send(r);  
-          /*} else {
-            alert("Account non trovato!");
-            console.log(rows);
-            res.render('pages/index');*/
-        
-        })  
-      })
-      connection.query('DROP IF EXISTS id;', (err,r)=>{
-          if(err){
-  
-          }else{
-  
-          }
-        });
+            
+        } 
     })
+    
 })
 
 //info singolo locale
-app.get('/info', (req,rec) => {
-    connection.query('DROP IF EXISTS id;', (err,r)=>{
-        connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, descrizione) AS SELECT DISTINCT tipologia.id_locale, nome_locale, descrizione FROM utente_locale WHERE utente_locale.id_locale="'+req.query.id_locale+'" && id_tipologia="'+req.query.id_tipologia+'"', (err, rows)=>{
-            connection.query('SELECT DISTINCT id_locale, nome_locale, descrizione FROM id', (err,r1)=>{
-                connection.query('SELECT DISTINCT tipo_servizio FROM servizi WHERE id_tipologia="'+req.query.id_tipologia+'"', (err,r2)=>{
-          console.log(r1,r2);
-        })
-      })
+app.get('/info', (req,res) =>{
+    connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, descrizione) AS SELECT DISTINCT utente_locale.id_locale, nome_locale, descrizione FROM tipologia,utente_locale WHERE tipologia.id_locale= utente_locale.id_locale',(err,rows)=>{
+        if(!err){
+            connection.query('SELECT DISTINCT * FROM id WHERE id_locale="'+req.query.id+'"' , (err, rows)=>{
+                connection.query('CREATE OR REPLACE VIEW bho(id_locale, id_tipologia, nome_tipologia, tipo_servizio, id_servizi, np, costo) AS SELECT tipologia.id_locale, tipologia.id_tipologia, tipologia.nome_tipologia, tipo_servizio, id_servizi, numero_massimo_persone,tipologia.costo FROM tipologia,servizi WHERE (tipologia.id_locale IN (SELECT DISTINCT id_locale FROM id) )', (err,r)=>{
+                    connection.query('SELECT DISTINCT id_tipologia, nome_tipologia, costo FROM bho WHERE id_locale="'+req.query.id+'"', (err,rr)=>{
+                        if(!err){
+                            connection.query('SELECT DISTINCT id_tipologia, id_servizi, tipo_servizio, prezzo_servizio FROM servizi WHERE (id_tipologia IN (SELECT id_tipologia FROM bho WHERE id_locale="'+req.query.id+'"))', (err,r)=>{
+                                if(!err){
+                                    connection.query("drop view bho, id;");
+                                    res.render('pages/infolocale', {rows,rr,r});
+                                }else{
+                                    console.log("errore!");
+                                }
+                            })
+                        }else{
+                            console.log("errore");
+                        }
+                    })
+                })
+            })
+        }
     })
-  })
 })
+
+//prenota
+app.get("/pren", function(req,res){
+    connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, descrizione) AS SELECT DISTINCT utente_locale.id_locale, nome_locale, descrizione FROM tipologia,utente_locale WHERE tipologia.id_locale= utente_locale.id_locale',(err,rows)=>{
+        if(!err){
+            connection.query('SELECT DISTINCT * FROM id WHERE id_locale="'+req.query.id_locale+'"' , (err, rows)=>{
+                connection.query('CREATE OR REPLACE VIEW bho(id_locale, id_tipologia, nome_tipologia, tipo_servizio, quantita, id_servizi, np, costo) AS SELECT tipologia.id_locale, tipologia.id_tipologia, tipologia.nome_tipologia, tipo_servizio, quantita, id_servizi, numero_massimo_persone,tipologia.costo FROM tipologia,servizi WHERE (tipologia.id_locale IN (SELECT DISTINCT id_locale FROM id) )', (err,r)=>{
+                    connection.query('SELECT DISTINCT id_tipologia, nome_tipologia, costo FROM bho WHERE id_locale="'+req.query.id_locale+'"', (err,rr)=>{
+                        if(!err){
+                                if(!err){
+                                    connection.query("drop view bho, id;");
+                                    //console.log(rr);
+                                    res.render("pages/prenota", {id_locale: req.query.id_locale, rr, rows});
+                                }else{
+                                    console.log("errore!");
+                                }
+                        }else{
+                            console.log("errore");
+                        }
+                    })
+                })
+            })
+        }
+    })
+   
+})
+
+app.post("/prenota", urlencodedParser, (req,res)=>{
+    const nome_tipologia = req.body.tip.split(' ');
+    connection.query("select id_tipologia from tipologia where nome_tipologia='"+nome_tipologia[0]+"' && id_locale='"+req.body.id_locale+"'", (err,rows)=>{
+        if(!err){
+            console.log(req.session.id_utente);
+            connection.query("INSERT INTO prenotazione_tipologia_locale (id_locale, id_cliente, id_tipologia, data_prenotazione) VALUES ('"+req.body.id_locale+"','"+req.session.id_utente+"','"+ rows[0].id_tipologia+"','"+req.body.data+"')", (err,rows)=>{
+                if(!err){
+                    
+                }else{
+                    
+                    console.log("porcodio");
+                }
+            })
+        }else{
+            console.log("errore");
+        }
+    })
+
+
+    //onnection.query(rr);
+    //res.render("pages/homepage");
+})
+
 
 //----------------------------------------------------------
 //login
@@ -375,7 +450,7 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
         `SELECT * FROM utente WHERE email = "${req.body["email"]}" AND password = "${req.body["password"]}"`,
         (err, rows) => {
             // if (err) throw err;
-
+            
             console.log("Data received from Db:");
             console.log(rows);
 

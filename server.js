@@ -3,21 +3,24 @@ var bodyParser = require("body-parser");
 const app = express();
 var session = require("express-session");
 const alert = require("alert");
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 //----------------------------------------------------
 //api documentation
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const swaggerOptions = {
-    swaggerDefinition: {
+        swaggerDefinition: {
         info: {
             title: "API D5 Progetto gruppo G31",
             description: "API documentation",
             contact: {
                 name: "Gruppo G31"
-            },
-            servers: ["http://localhost:3535/"]
-        }
+             },
+             servers: ["http://localhost:3535/"]
+         }
     },
     apis: ["server.js"]
 };
@@ -55,7 +58,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "book",
+    database: "testbook",
 });
 
 connection.connect((err) => {
@@ -129,6 +132,7 @@ app.get('/info', (req,res) =>{
                         if(!err){
                             connection.query('SELECT DISTINCT id_tipologia, id_servizi, tipo_servizio, prezzo_servizio FROM servizi WHERE (id_tipologia IN (SELECT id_tipologia FROM bho WHERE id_locale="'+req.query.id+'"))', (err,r)=>{
                                 if(!err){
+                                    console.log(r);
                                     connection.query("drop view bho, id;");
                                     res.render('pages/infolocale', {rows,rr,r});
                                 }else{
@@ -145,6 +149,7 @@ app.get('/info', (req,res) =>{
     })
 })
 
+//INIZIO
 //prenota
 app.get("/pren", function(req,res){
     connection.query('CREATE OR REPLACE VIEW id(id_locale, nome_locale, descrizione) AS SELECT DISTINCT utente_locale.id_locale, nome_locale, descrizione FROM tipologia,utente_locale WHERE tipologia.id_locale= utente_locale.id_locale',(err,rows)=>{
@@ -172,7 +177,6 @@ app.get("/pren", function(req,res){
 })
 
 
-//INIZIO
 app.post("/prenota", urlencodedParser, (req,res)=>{
     const nome_tipologia = req.body.tip.split(' ');
     if(req.session.id_utente!=undefined){
@@ -239,15 +243,14 @@ app.get("/infopren", function (req,res){
 
 app.delete("/annullapren" , (req,res)=>{
     console.log("bho");
-    /*connection.query("DELETE FROM prenotazione_tipologia_locale WHERE id_cliente='"+req.query.id_utente+"' && id_prenotazione='"+req.query.id_prenotazione+"'", (err, rows)=>{
+    connection.query("DELETE FROM prenotazione_tipologia_locale WHERE id_cliente='"+req.query.id_utente+"' && id_prenotazione='"+req.query.id_prenotazione+"'", (err, rows)=>{
         if(!err){
-            res.redirect("/elencopre");
+            res.sendStatus(200);
             //res.render("pages/locali");
         }else{
             console.log("error annulla");
         }
-    })*/
-    res.redirect("/elencopre");
+    })
 })
 //FINE
 
@@ -263,17 +266,30 @@ app.get("/registrazioneUtente", function (req, res) {
 });
 
 app.get("/tipologie", async function (req, res) {
-  console.log(req.session)
-    connection.query(
-        `SELECT * FROM tipologia WHERE id_locale = "${req.session.id_utente}"`,
-        (err, tipologie) => {
-            if (err) throw err;
-
-            console.log("Data received from Db:");
-            console.log(tipologie);
-            res.render("pages/tipologie", { tipologie });
-        }
-    );
+    console.log(req.session)
+    if(req.session.isLocale == 1){
+      connection.query(
+          `SELECT * FROM tipologia WHERE id_locale = "${req.session.id_utente}"`,
+          (err, tipologie) => {
+              if (err) throw err;
+  
+              console.log("Data received from Db:");
+              console.log(tipologie);
+              res.render("pages/tipologie", { tipologie });
+          }
+      );
+    }else{
+      connection.query(
+          `SELECT * FROM tipologia WHERE id_locale = "${req.query.id}"`,
+          (err, tipologie) => {
+              if (err) throw err;
+  
+              console.log("Data received from Db:");
+              console.log(tipologie);
+              res.render("pages/tipologie", { tipologie });
+          }
+      );
+    }
 });
 
 app.get("/registrazioneLocale", async function (req, res) {
@@ -292,17 +308,16 @@ app.get("/home", async function (req, res){
   })
   
   app.get("/homepage", async function (req, res) {
-      isGestore = req.session.isTipoGestore;
+      isGestore = req.session.isTipoGestore
       res.render("pages/homepage", {isGestore});
   });
+  
+  app.get("/homepageLocale", async function (req, res) {
+      res.render("pages/homepageLocale");
+  });
+  //---------------------------------------------
 
-
-app.get("/homepageLocale", async function (req, res) {
-    res.render("pages/homepageLocale");
-});
-//---------------------------------------------
-
-app.get("/gestioneAccount", async function (req, res) {
+  app.get("/gestioneAccount", async function (req, res) {
     // Find all employees
     console.log("ID UTENTE: " + req.session.id_utente);
     if (req.session.isLocale == 0) {
@@ -343,7 +358,9 @@ app.get("/gestioneAccount", async function (req, res) {
 });
 
 app.get("/aggiungiTipologia", async function (req, res) {
-    res.render("pages/aggiungiTipologia");
+  console.log(req.query.id);
+  id_locale = req.query.id
+  res.render("pages/aggiungiTipologia", {id_locale});
 });
 
 app.get("/modificaTipologia", async function (req, res) {
@@ -361,26 +378,75 @@ app.get("/modificaTipologia", async function (req, res) {
     );
 });
 
-app.get("/eliminaTipologia", (req, res) => {
-  console.log("IMPLEMENTARE IL FATTO CHE IL LOCALE NON PUO' ELIMINARE LE TIPOLOGIE CREATE DAL GESTORE")
+app.delete("/eliminaTipologia", (req, res) => {
   console.log(req.session)
-    console.log("ID DA ELIMINARE " + req.query.id);
-    connection.query(
-        `DELETE FROM tipologia WHERE id_tipologia = "${req.query.id}"`,
-        (err, tipologia) => {
-            if (err) throw err;
-            connection.query(
-                `SELECT * FROM tipologia WHERE id_locale = "${req.session.id_utente}"`,
-                (err, tipologie) => {
-                    if (err) throw err;
+    console.log("ID DA ELIMINARE " + req.query.idT);
+    if(req.session.isTipoGestore == 1){
+      connection.query(
+          `DELETE FROM tipologia WHERE id_tipologia = "${req.query.idT}"`,
+          (err, tipologia) => {
+              if (err) throw err;
+              connection.query(
+                  `SELECT * FROM tipologia WHERE id_locale = "${req.query.idL}"`,
+                  (err, tipologie) => {
+                      if (err) throw err;
 
-                    console.log("Data received from Db:");
-                    console.log(tipologie);
-                    res.render("pages/tipologie", { tipologie });
-                }
-            );
-        }
-    );
+                      console.log("Data received from Db:");
+                      console.log(tipologie);
+                      res.render("pages/tipologie", { tipologie });
+                  }
+              );
+          }
+      );
+    }else{
+      connection.query(
+          `SELECT isGestore FROM tipologia WHERE id_tipologia = "${req.query.idT}"`,
+          (err, risposta) => {
+              if (err) throw err;
+              console.log(risposta[0].isGestore)
+              if(risposta[0].isGestore == 0){
+                connection.query(
+                    `DELETE FROM tipologia WHERE id_tipologia = "${req.query.idT}"`,
+                    (err, tipologia) => {
+                        if (err) throw err;
+                        connection.query(
+                            `SELECT * FROM tipologia WHERE id_locale = "${req.query.idL}"`,
+                            (err, tipologie) => {
+                                if (err) throw err;
+
+                                console.log("Data received from Db:");
+                                console.log(tipologie);
+                                res.render("pages/tipologie", { tipologie });
+                            }
+                        );
+                    }
+                );
+              }else{
+                console.log("Solo il gestore può eliminare questa tipologia")
+                connection.query(
+                    `SELECT * FROM tipologia WHERE id_locale = "${req.query.idL}"`,
+                    (err, tipologie) => {
+                        if (err) throw err;
+
+                        console.log("Data received from Db:");
+                        console.log(tipologie);
+                        res.render("pages/tipologie", { tipologie });
+                    }
+                );
+              }
+              // connection.query(
+              //     `SELECT * FROM tipologia WHERE id_locale = "${req.query.idL}"`,
+              //     (err, tipologie) => {
+              //         if (err) throw err;
+
+              //         console.log("Data received from Db:");
+              //         console.log(tipologie);
+              //         res.render("pages/tipologie", { tipologie });
+              //     }
+              // );
+          }
+      );
+    }
 });
 
 app.get("/aggiungiServizi", (req, res) => {
@@ -390,6 +456,160 @@ app.get("/aggiungiServizi", (req, res) => {
     res.render("pages/aggiungiServizio", { id_tipologia });
 });
 
+app.get("/elencoServizi", async function (req, res) {
+    console.log(req.query.id);
+    connection.query(
+        `SELECT * FROM servizi WHERE id_tipologia = "${req.query.id}"`,
+        (err, servizi) => {
+            if (err) throw err;
+
+            console.log("Data received from Db:");
+            console.log(servizi);
+            res.render("pages/servizi", { servizi });
+        }
+    );
+});
+
+app.get("/modificaServizio", async function (req, res) {
+    console.log(req.query.id);
+    connection.query(
+        `SELECT * FROM servizi WHERE id_servizi = "${req.query.id}"`,
+        (err, servizio) => {
+            if (err) throw err;
+
+            console.log("Data received from Db:");
+            console.log(servizio);
+            res.render("pages/modificaServizio", { servizio });
+        }
+    );
+});
+
+app.get("/locali", async function (req, res) {
+  connection.query(
+      `SELECT * FROM utente_locale WHERE id_gestore = "${req.session.id_utente}"`,
+      (err, locali) => {
+          if (err) throw err;
+
+          console.log("Data received from Db:");
+          console.log(locali);
+          res.render("pages/elencoLocali", { locali });
+      }
+  );
+});
+
+app.get("/modificaLocale", async function (req, res) {
+  console.log(req.query.id);
+  connection.query(
+      `SELECT * FROM utente_locale WHERE id_locale = "${req.query.id}"`,
+      (err, locale) => {
+          if (err) throw err;
+
+          console.log("Data received from Db:");
+          console.log(locale);
+          res.render("pages/modificaLocale", { locale });
+      }
+  );
+});
+
+app.delete("/eliminaServizio", (req, res) => {
+    // console.log(req.session);
+    console.log("DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE");
+    console.log("ID DA ELIMINARE " + req.query.idS);
+    console.log("ID TIPOLOGIA " + req.query.idT);
+    connection.query(
+        `DELETE FROM servizi WHERE id_servizi = "${req.query.idS}"`,
+        (err, tipologia) => {
+            if (err) throw err;
+            connection.query(
+                `SELECT * FROM servizi WHERE id_tipologia = "${req.query.idT}"`,
+                (err, servizi) => {
+                    if (err) throw err;
+
+                    console.log("Data received from Db:");
+                    console.log(servizi);
+                    res.render("pages/servizi", { servizi });
+                }
+            );
+        }
+    );
+});
+
+app.delete("/eliminaLocale", (req, res) => {
+    console.log(req.session);
+    console.log("ID DA ELIMINARE " + req.query.id);
+    connection.query(
+        `DELETE FROM utente_locale WHERE id_locale = "${req.query.id}"`,
+        (err, locale) => {
+            if (err) throw err;
+            connection.query(
+                `SELECT * FROM utente_locale WHERE id_gestore = "${req.session.id_utente}"`,
+                (err, locali) => {
+                    if (err) throw err;
+
+                    console.log("Data received from Db:");
+                    console.log(locali);
+                    res.render("pages/elencoLocali", { locali });
+                }
+            );
+        }
+    );
+});
+
+
+app.post("/modificaLocale/aggiorna", urlencodedParser, (req, res) => {
+    console.log("Aggiorna informazione locale");
+    console.log(req.body);
+    connection.query(
+        `UPDATE utente_locale SET nome_locale = "${req.body["nome"]}", email = "${req.body["email"]}", numero_telefono = "${req.body["numero_telefono"]}" WHERE id_locale = "${req.body["id_locale"]}"`,
+        (err, res) => {
+            if (err) throw err;
+            console.log("Last insert ID:", res.insertId);
+        }
+    );
+    connection.query(
+        `SELECT * FROM utente_locale WHERE id_gestore = "${req.session.id_utente}"`,
+        (err, locali) => {
+            if (err) throw err;
+
+            console.log("Data received from Db:");
+            console.log(locali);
+            res.render("pages/elencoLocali", { locali });
+        }
+    );
+});
+
+app.post("/modificaServizio/aggiorna", urlencodedParser, (req, res) => {
+    console.log("Aggiorna informazione servizio");
+    console.log(req.body);
+    connection.query(
+        `UPDATE servizi SET tipo_servizio = "${req.body["tipoServizio"]}", prezzo_servizio = "${req.body["prezzoServizio"]}"
+        WHERE id_servizi = "${req.body["id_servizi"]}"`,
+        (err, res) => {
+            if (err) throw err;
+            console.log("Last insert ID:", res.insertId);
+        }
+    );
+    connection.query(
+        `SELECT id_tipologia FROM servizi WHERE id_servizi = "${req.body["id_servizi"]}"`,
+        (err, tipologia) => {
+            if (err) throw err;
+
+            console.log("Data received from Db:");
+            console.log(tipologia[0].id_tipologia);
+            connection.query(
+                `SELECT * FROM servizi WHERE id_tipologia = "${tipologia[0].id_tipologia}"`,
+                (err, servizi) => {
+                    if (err) throw err;
+
+                    console.log("Data received from Db:");
+                    console.log(servizi);
+                    res.render("pages/servizi", { servizi });
+                }
+            );
+        }
+    );
+});
+
 app.post("/aggiungiServizio", urlencodedParser, (req, res) => {
   var newServizio = {
       id_tipologia: req.body["id_tipologia"],
@@ -397,9 +617,20 @@ app.post("/aggiungiServizio", urlencodedParser, (req, res) => {
       prezzo_servizio: req.body["prezzoServizio"],
   };
 
-  connection.query("INSERT INTO servizi SET ?", newServizio, (err, res) => {
+  connection.query("INSERT INTO servizi SET ?", newServizio, (err, rows) => {
       if (err) throw err;
-      console.log("Last insert ID:", res.insertId);
+      console.log("Last insert ID:", rows.insertId);
+
+      connection.query(
+          `SELECT * FROM servizi WHERE id_tipologia = "${req.body["id_tipologia"]}"`,
+          (err, servizi) => {
+              if (err) throw err;
+
+              console.log("Data received from Db:");
+              console.log(servizi);
+              res.render("pages/servizi", { servizi });
+          }
+      );
   });
 });
 
@@ -417,7 +648,7 @@ app.post("/modificaTipologia/aggiorna", urlencodedParser, (req, res) => {
         }
     );
     connection.query(
-        `SELECT * FROM tipologia WHERE id_locale = "${req.session.id_utente}"`,
+        `SELECT * FROM tipologia WHERE id_locale = "${req.body["id_locale"]}"`,
         (err, tipologie) => {
             if (err) throw err;
 
@@ -457,7 +688,7 @@ app.post("/api/registrazioneLocale", urlencodedParser, (req, res) => {
     console.log(req.session);
 
     var newLocale = {
-        id_utente: req.session["id_utente"],
+        id_gestore: req.session["id_utente"],
         nome_locale: req.body["nome"],
         email: req.body["email"],
         password: req.body["password"],
@@ -485,6 +716,7 @@ app.post("/api/registrazioneLocale", urlencodedParser, (req, res) => {
             }
         );
     }
+    res.redirect("/home")
 });
 
 app.post("/api/registrazioneUtente", urlencodedParser, (req, res) => {
@@ -512,7 +744,7 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
         `SELECT * FROM utente WHERE email = "${req.body["email"]}" AND password = "${req.body["password"]}"`,
         (err, rows) => {
             // if (err) throw err;
-            
+
             console.log("Data received from Db:");
             console.log(rows);
 
@@ -523,9 +755,10 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
                 req.session.username = req.body["email"];
                 req.session.isLocale = 0;
                 req.session.isTipoGestore = rows[0]["isTipoGestore"];
-                console.log(req.session.isTipoGestore);
-                // res.send("Logged in");
+                console.log(req.session);
+                //res.send("Logged in");
                 res.redirect("/homepage");
+
             } else {
                 connection.query(
                     `SELECT * FROM utente_locale WHERE email = "${req.body["email"]}" AND password = "${req.body["password"]}"`,
@@ -562,18 +795,26 @@ app.post("/aggiungiTipologia", urlencodedParser, (req, res) => {
     // SE SI TROVA UN MODO PER NON METTERE TUTTO DENTRO UN ORRIBILE FUNZIONE TANTO MEGLIO MA ATM NON SAPREI COME FARLO
     console.log(req.session);
     console.log(req.body);
-
-    var newLocale = {
-        id_locale: req.session["id_utente"],
-        nome_tipologia: req.body["nome"],
-        quantita: req.body["quantita"],
-        costo: req.body["costo"],
-        numero_massimo_persone: req.body["nMaxPersone"],
-        zona_aperta: req.body["zona_aperta"],
-        isGestore: 0,
-    };
-    if (req.session.isLocale == 0) {
-        newLocale.isGestore = 1;
+    if(req.session.isLocale == 1){
+      var newLocale = {
+          id_locale: req.session["id_utente"],
+          nome_tipologia: req.body["nome"],
+          quantita: req.body["quantita"],
+          costo: req.body["costo"],
+          numero_massimo_persone: req.body["nMaxPersone"],
+          zona_aperta: req.body["zona_aperta"],
+          isGestore: 0,
+      };
+    }else{
+      var newLocale = {
+          id_locale: req.body["id_locale"],
+          nome_tipologia: req.body["nome"],
+          quantita: req.body["quantita"],
+          costo: req.body["costo"],
+          numero_massimo_persone: req.body["nMaxPersone"],
+          zona_aperta: req.body["zona_aperta"],
+          isGestore: 1,
+      };
     }
 
     connection.query("INSERT INTO tipologia SET ?", newLocale, (err, res) => {
@@ -590,17 +831,28 @@ app.post("/aggiungiTipologia", urlencodedParser, (req, res) => {
                 console.log("Last insert ID:", res.insertId);
             }
         );
-    }
-    connection.query(
-        `SELECT * FROM tipologia WHERE id_locale = "${req.session.id_utente}"`,
-        (err, tipologie) => {
-            if (err) throw err;
+        connection.query(
+            `SELECT * FROM tipologia WHERE id_locale = "${req.session.id_utente}"`,
+            (err, tipologie) => {
+                if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(tipologie);
-            res.render("pages/tipologie", { tipologie });
-        }
-    );
+                console.log("Data received from Db:");
+                console.log(tipologie);
+                res.render("pages/tipologie", { tipologie });
+            }
+        );
+    }else{
+      connection.query(
+          `SELECT * FROM tipologia WHERE id_locale = "${req.body["id_locale"]}"`,
+          (err, tipologie) => {
+              if (err) throw err;
+
+              console.log("Data received from Db:");
+              console.log(tipologie);
+              res.render("pages/tipologie", { tipologie });
+          }
+      );
+    }
 });
 
 app.get("/api/utenti", (req, res) => {
@@ -615,60 +867,206 @@ app.get("/api/utenti", (req, res) => {
     );
 });
 
-//--------------------------------------------------------------------------------------------
+
+/**
+* @swagger
+* 
+* 
+* /prenotazioni:
+*   get:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di visualizzare le prenotazioni dei vari clienti.
+*     parameters:
+*     - in: "session" 
+*       name: "is_locale"
+*       description: "Indica se l'account è di tipo locale o no"
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id dell'utente connesso"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazioni visualizzate correttamente"
+*
+ */
+
+
+//-------------------------------------------------------------------------------------------- UTENTE LOCALE
 //visualizzazione prenotazioni
+//risolvere problema data
 app.get('/prenotazioni', async function(req, res) { 
 
     var id_locale;
     if (req.session.isLocale == 1) id_locale = req.session.id_utente;
-    console.log(req.session.isLocale);
-    connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
-        if (err) throw err;
+        console.log(req.session.isLocale);
+        connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
+            if (err) { console.log(res.status(400)); throw err;}
+            else {
+                //errore con accesso a cella dell'array non esistente
+                /* var i=0;  
+                while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
+                    console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
+                    prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
+                    
+                    i++;
+                    }*/
 
-       /* var i=0;  //errore con accesso a cella dell'array non esistente
-        while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
-            console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
-            prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
-            
-            i++;
-            }*/
-        console.log("Data received from Db:");
-        console.log(prenotazioni);
-        res.render("pages/elencoPrenotazioniLocale", { prenotazioni });
-    });
+               //console.log(res.status(200));    
+                console.log("Data received from Db:");
+                console.log(prenotazioni);
+                res.render("pages/elencoPrenotazioniLocale", { prenotazioni });
+            }
+        });
 })
 
+
+/**
+* @swagger
+* 
+* 
+* /prenotazioni/prenotazione_spec/:id_prenotazione:
+*   get:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di visualizzare le informazioni di una determinata prenotazione di un cliente.
+*     parameters:
+*     - in: "params" 
+*       name: "id_Prenotazione"
+*       description: "Indica l'id della prenotazione che si vuole visualizzare"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazione visualizzata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*
+ */
+
+//visualizzazione prenotazioni specifiche
 app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req, res) { 
 
- //visualizzazione prenotazioni specifiche   
+    
     var id_prenotazione = req.params.id_prenotazione;
     console.log(id_prenotazione); 
     connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, p.data_prenotazione, t.quantita, t.numero_massimo_persone, uc.nome, uc.cognome, uc.numero_telefono, uc.email  FROM prenotazione_tipologia_locale AS p, utente AS uc, tipologia AS t WHERE p.id_prenotazione = "${id_prenotazione}" AND t.id_tipologia = p.id_tipologia AND p.id_cliente = uc.id_utente;`,(err,prenotazione)=> {
-        if (err) throw err;
-
-    prenotazione[0]["data_prenotazione"] = formatDate(prenotazione[0]["data_prenotazione"] );
-
-    console.log("Data received from Db:");
-    console.log(prenotazione);
-    res.render("pages/elencoPrenotazioneSpec", { prenotazione });
-   
+        if (err) { res.status(400); throw err;}
+        else {
+            prenotazione[0]["data_prenotazione"] = formatDate(prenotazione[0]["data_prenotazione"] );
+            
+            
+            console.log("Data received from Db:");
+            console.log(prenotazione);
+            res.render("pages/elencoPrenotazioneSpec", { prenotazione });
+            prenotazione = JSON.stringify(prenotazione);
+            console.log(prenotazione);
+           //res.send(prenotazione);
+            
+        }
     });
 });
 
-//annulla prenotazioni 
-app.get('/prenotazioni/prenotazione_spec/annulla/:id_prenotazione', (req, res) => {
-    var id_prenotazione = req.params.id_prenotazione;
-    console.log(id_prenotazione);
-
-   connection.query(`DELETE FROM prenotazione_tipologia_locale WHERE id_prenotazione = ?`,[id_prenotazione], (err,prenotazione)=> {
-        if (err) throw err;
-        else {
+/**
+* @swagger 
+* 
+* /prenotazioni/prenotazione_spec/annulla/:
+*   delete:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette all'utente di tipo Locale di eliminare una determinata prenotazione di un cliente.
+*     parameters:
+*     - in: "query" 
+*       name: "id_Prenotazione"
+*       description: "Indica l'id della prenotazione che si vuole annullare"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Prenotazione annullata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+//risolvere problema data
+app.delete('/prenotazioni/prenotazione_spec/annulla/', (req, res) => {
+    var id_prenotazione = req.query.idP;
+     console.log("appdelete "+id_prenotazione);
+ 
+    connection.query(`DELETE FROM prenotazione_tipologia_locale WHERE id_prenotazione = ?`,[id_prenotazione], (err,prenotazione)=> {
+     if (err) { console.log(res.status(400)); throw err;}
+         else {
+             
             alert("Prenotazione annullata"); //tornare all'elenco locali
-            res.redirect('../../');
-        }
-    });    
+            console.log(res.status(200));
+
+            connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${req.session.id_utente}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
+                if (err) { console.log(res.status(400)); throw err;}
+                else {
+                    
+                    //errore con accesso a cella dell'array non esistente
+                    /* var i=0;  
+                    while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
+                        console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
+                        prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
+                        
+                        i++;
+                        }*/
     
-}); 
+                    console.log(res.status(200));    
+                    console.log("Data received from Db:");
+                    console.log(prenotazioni);
+                    res.render("pages/elencoPrenotazioniLocale", { prenotazioni });
+                }
+            });
+         }
+     });   
+     
+ });
+
+//-------------------------------------------------------------------------------------------- UTENTE GESTORE
+
+/**
+* @swagger
+* 
+* 
+* /eliminaGestore:
+*   delete:
+*     tags:  
+*     - "Gestore"  
+*     summary: Permette all'utente di tipo Gestore di eliminare il proprio account.
+*     parameters:
+*     - in: "session" 
+*       name: "isTipoGestore"
+*       description: "Indica se l'utente è un gestore o no"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Account eliminato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*
+*/
+//elimina gestore
+app.delete('/eliminaGestore', (req,res) => {
+    console.log("è gestore: "+req.session.isTipoGestore);
+
+    connection.query(`DELETE FROM utente WHERE isTipoGestore = 1 AND id_utente = ?`,[req.session.id_utente], (err,cancellazione)=> {
+        if (err) { console.log(res.status(400)); throw err;}
+        else {
+            res.render("pages/login");
+            alert("Account eliminato"); //tornare al login/ricerca senza login
+            //res.redirect('../../');
+            console.log(res.status(200));
+        }
+    });   
+
+});
+
+
+//render profilo utente CLIENTE/GESTORE
+app.get("/profiloUtente", function (req, res) {
+    res.render("pages/profiloUtente");
+});
 
 app.listen(3535);
 console.log("Server is listening on port 3535");
+
+module.exports = app;

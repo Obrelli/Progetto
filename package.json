@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test | tap-spec"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +21,9 @@
     "until": "^0.1.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "supertest": "^6.1.6",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.3.2"
   }
 }

@@ -94,13 +94,12 @@
           url = '/annullapren?id_utente='.concat(id_utente).concat('&id_prenotazione=').concat(id_prenotazione);
           $.ajax({
             url : url,
-            method : 'delete'
-            /*
+            method : 'delete',
             success: function(){
                   // location.reload();
                   console.log("success");
-                  document.location.href = "/home";
-              }*/
+                  document.location.href = "/elencopre";
+              }
           })
           // document.location.href=url;
         }

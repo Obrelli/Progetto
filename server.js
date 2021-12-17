@@ -2,12 +2,7 @@ const express = require("express");
 var bodyParser = require("body-parser");
 const app = express();
 var session = require("express-session");
-var id_locale;
-const https = require("https");
-const http = require("http");
 const alert = require("alert");
-const util = require('util');
-let array = [];
 //----------------------------------------------------
 //api documentation
 const swaggerJsDoc = require('swagger-jsdoc');
@@ -176,28 +171,85 @@ app.get("/pren", function(req,res){
    
 })
 
+
+//INIZIO
 app.post("/prenota", urlencodedParser, (req,res)=>{
     const nome_tipologia = req.body.tip.split(' ');
+    if(req.session.id_utente!=undefined){
     connection.query("select id_tipologia from tipologia where nome_tipologia='"+nome_tipologia[0]+"' && id_locale='"+req.body.id_locale+"'", (err,rows)=>{
         if(!err){
-            connection.query("INSERT INTO prenotazione_tipologia_locale (id_locale, id_cliente, id_tipologia, data_prenotazione) VALUES ('"+req.body.id_locale+"','"+req.session.id_utente+"','"+ rows[0].id_tipologia+"','"+req.body.data+"')", (err,rows)=>{
+            connection.query("INSERT INTO prenotazione_tipologia_locale (id_locale, id_cliente, id_tipologia, data_prenotazione, quantita) VALUES ('"+req.body.id_locale+"','"+req.session.id_utente+"','"+ rows[0].id_tipologia+"','"+req.body.data+"','"+req.body.quantita+"')", (err,rows)=>{
                 if(!err){
-                    
+                    res.redirect("/elencopre");
                 }else{
-                    
-                    console.log("porcodio");
+                    console.log("DIo bestia");
                 }
             })
         }else{
             console.log("errore");
         }
     })
-
-
-    //onnection.query(rr);
-    //res.render("pages/homepage");
+}else{
+    res.redirect("/login");
+}
 })
 
+app.get("/elencopre", (req,res)=>{
+    console.log("ollllllllll");
+    connection.query("CREATE OR REPLACE VIEW id(id_locale, id_cliente, id_prenotazione,id_tipologia,data_prenotazione,quantita) AS SELECT id_locale, id_cliente, id_prenotazione,id_tipologia,data_prenotazione,quantita FROM prenotazione_tipologia_locale WHERE id_cliente='"+req.session.id_utente+"'", (err,PREN)=>{
+     
+        if(!err){
+            connection.query("SELECT * FROM id WHERE id_cliente='"+req.session.id_utente+"'", (err,PREN)=>{  
+            console.log(req.session.id_utente);
+            if(req.session.id_utente!=undefined){
+            connection.query("SELECT id.id_locale, id_cliente, id_prenotazione,id.id_tipologia,data_prenotazione,id.quantita, nome_locale, nome_tipologia, costo FROM id,utente_locale,tipologia WHERE id.id_cliente='"+req.session.id_utente+"' && id.id_locale=utente_locale.id_locale && id.id_tipologia = tipologia.id_tipologia;", (err,UTLOC)=>{
+                console.log(PREN);
+                if(!err){       
+                    UTLOC.forEach(r =>{
+                        r.data_prenotazione=formatDate(r.data_prenotazione);
+                    })
+                        res.render("pages/elencoprenotazioni", {PREN,UTLOC, utente: req.session.id_utente});
+                    }else{
+                        console.log("elenco prenotazioni- query error");
+                    }
+                })
+        }else{
+            res.redirect("/login");
+        }
+    })
+        }else{
+            console.log("hmmm");
+        }
+    })
+})
+
+app.get("/infopren", function (req,res){
+    connection.query("CREATE OR REPLACE VIEW id(id_locale, id_cliente, id_prenotazione,id_tipologia,data_prenotazione,quantita) AS SELECT id_locale, id_cliente, id_prenotazione,id_tipologia,data_prenotazione,quantita FROM prenotazione_tipologia_locale WHERE id_cliente='"+req.query.utente+"' && id_prenotazione='"+req.query.id+"'", (err,PREN)=>{
+        if(!err){
+            connection.query("SELECT id.id_locale, id_cliente, id_prenotazione,id.id_tipologia,data_prenotazione,id.quantita, nome_locale, nome_tipologia, costo, email, numero_telefono, citta, indirizzo_locale FROM id,utente_locale,tipologia WHERE id.id_cliente='"+req.query.utente+"' && id_prenotazione='"+req.query.id+"' && id.id_locale=utente_locale.id_locale && id.id_tipologia = tipologia.id_tipologia;", (err,UTLOC)=>{
+                //console.log("info");
+                //console.log(UTLOC);
+                UTLOC[0].data_prenotazione=formatDate(UTLOC[0].data_prenotazione);
+                res.render("pages/infoprenotazione", {UTLOC, utente:  req.query.utente});
+            });
+        }
+    })
+})
+
+
+app.delete("/annullapren" , (req,res)=>{
+    console.log("bho");
+    /*connection.query("DELETE FROM prenotazione_tipologia_locale WHERE id_cliente='"+req.query.id_utente+"' && id_prenotazione='"+req.query.id_prenotazione+"'", (err, rows)=>{
+        if(!err){
+            res.redirect("/elencopre");
+            //res.render("pages/locali");
+        }else{
+            console.log("error annulla");
+        }
+    })*/
+    res.redirect("/elencopre");
+})
+//FINE
 
 //----------------------------------------------------------
 //login
@@ -230,9 +282,20 @@ app.get("/registrazioneLocale", async function (req, res) {
 
 //---------------------------------------------
 //sezione Homepage dei vari utenti
-app.get("/homepage", async function (req, res) {
-    res.render("pages/homepage");
-});
+app.get("/home", async function (req, res){
+    if(req.session.isLocale == 0){
+      isGestore = req.session.isTipoGestore;
+      res.render("pages/homepage", { isGestore });
+    }else{
+      res.render("pages/homepageLocale");
+    }
+  })
+  
+  app.get("/homepage", async function (req, res) {
+      isGestore = req.session.isTipoGestore;
+      res.render("pages/homepage", {isGestore});
+  });
+
 
 app.get("/homepageLocale", async function (req, res) {
     res.render("pages/homepageLocale");
@@ -460,7 +523,7 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
                 req.session.username = req.body["email"];
                 req.session.isLocale = 0;
                 req.session.isTipoGestore = rows[0]["isTipoGestore"];
-                console.log(req.session);
+                console.log(req.session.isTipoGestore);
                 // res.send("Logged in");
                 res.redirect("/homepage");
             } else {

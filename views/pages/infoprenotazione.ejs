@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+
+        <meta content="../img/1.ico">
+        <%- include('style');%>
+    </head>
+    <body style="text-align: center;">
+        <div >
+        <h1  class="h1" type="text" >Book&Party</h1>
+        </div> 
+        <div class="padding">
+            <table>
+                <tr>
+                    <td class="b">
+                        Numero Prenotazione:
+                    </td>
+                    <td class="b">
+                        <%=UTLOC[0].id_prenotazione%>
+                    </td>
+                </tr>
+            </table>
+        </div> 
+        <div class="padding">
+            <input  type="text" style="text-align: center; font-size: 50px; width: 98%;" class="b" value="<%=UTLOC[0].nome_locale%>">
+        </div>              
+        <div>
+            <table>
+                <tr>
+                    <div class="padding">
+                    <table class="infopren">
+                        <tr>
+                            <td class="bho">
+                                <img class="icone" src="../img/calendar.png">
+                            </td>
+                            <td class="bho">
+                                <%=UTLOC[0].data_prenotazione%>
+                            </td>
+                        </tr>
+                    </table>
+                </tr></div>
+                <tr>
+                    <div class="padding">
+                    <table class="infopren">
+                        <tr>
+                            <td class="bho">
+                                <img style="min-width: 70px; min-height: 100px;" src="../img/location.png">
+                            </td>
+                            <td class="bho">
+                                <%=UTLOC[0].citta%> - <%=UTLOC[0].indirizzo_locale%>
+                            </td>
+                        </tr>
+                    </table></div>
+                </tr>
+                <tr>
+                    <div class="padding">
+                    <table class="infopren">
+                        <tr>
+                            <td class="bho">
+                                <img class="icone" src="../img/phone.png">
+                            </td>
+                            <td class="bho">
+                                <%=UTLOC[0].numero_telefono%>
+                            </td>
+                        </tr>
+                    </table>
+                </tr>
+            </div>
+            <div class="padding">
+                <tr>
+                    <table class="infopren">
+                        <tr>
+                            <td class="bho">
+                                <img class="icone" src="../img/mail.png">
+                            </td>
+                            <td class="bho">
+                                <%=UTLOC[0].email%>
+                            </td>
+                        </tr>
+                    </table>
+                </tr></div>
+            </table>
+        </div>
+
+                     
+                    <div class="padding">
+            <button class='bottone' onclick="ANNULLA('<%=utente%>','<%=UTLOC[0].id_prenotazione%>')">ANNULLA</button>
+         </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        function ANNULLA(id_utente, id_prenotazione){
+            console.log("test");
+          url = '/annullapren?id_utente='.concat(id_utente).concat('&id_prenotazione=').concat(id_prenotazione);
+          $.ajax({
+            url : url,
+            method : 'delete'
+            /*
+            success: function(){
+                  // location.reload();
+                  console.log("success");
+                  document.location.href = "/home";
+              }*/
+          })
+          // document.location.href=url;
+        }
+    </script>             
+                
+    </body>
+</html>

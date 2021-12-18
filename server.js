@@ -58,7 +58,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "testbook",
+    database: "book",
 });
 
 connection.connect((err) => {
@@ -903,14 +903,11 @@ app.get('/prenotazioni', async function(req, res) {
         connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
             if (err) { console.log(res.status(400)); throw err;}
             else {
-                //errore con accesso a cella dell'array non esistente
-                /* var i=0;  
-                while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
-                    console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
-                    prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
-                    
-                    i++;
-                    }*/
+                
+                prenotazioni.forEach(element =>{
+                    element.data_prenotazione=formatDate(element.data_prenotazione);
+                });
+
 
                //console.log(res.status(200));    
                 console.log("Data received from Db:");
@@ -1001,16 +998,11 @@ app.delete('/prenotazioni/prenotazione_spec/annulla/', (req, res) => {
                 if (err) { console.log(res.status(400)); throw err;}
                 else {
                     
-                    //errore con accesso a cella dell'array non esistente
-                    /* var i=0;  
-                    while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
-                        console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
-                        prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
-                        
-                        i++;
-                        }*/
+                    prenotazioni.forEach(element =>{
+                        element.data_prenotazione=formatDate(element.data_prenotazione);
+                    });
     
-                    console.log(res.status(200));    
+                    res.status(200);    
                     console.log("Data received from Db:");
                     console.log(prenotazioni);
                     res.render("pages/elencoPrenotazioniLocale", { prenotazioni });

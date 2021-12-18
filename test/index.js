@@ -74,3 +74,73 @@ test('Test prenotazioni: elenco info prenotazione specifica restituito correttam
             assert.end();
         });
 });
+
+
+
+
+//testing modificaServizio
+test('Test modificaServizio: elenco servizi restituito correttamente',function(assert){
+    request(app)
+        .get('/modificaServizio')
+        .expect('Content-Type', "text/html; charset=utf-8")
+        .expect(200)
+        .end(function (err,res){
+            console.log(res.body.length);
+            var elencoServizi = res.body.length;
+            var result = false;
+            if (elencoServizi == 0) {
+                result = true;
+            }
+
+            assert.error(err, 'No error');
+            assert.notEqual(true, result, 'elenco sevizio restituito correttamente');
+            assert.end();
+        });
+
+});
+
+
+
+//testing modificaServizio
+test('Test modificaServizio: elenco servizi restituito correttamente',function(assert){
+    request(app)
+        .get('/modificaServizio')
+        .expect('Content-Type', "text/html; charset=utf-8")
+        .expect(200)
+        .end(function (err,res){
+            console.log(res.body.length);
+            var elencoServizi = res.body.length;
+            var result = false;
+            if (elencoServizi == 0) {
+                result = true;
+            }
+
+            assert.error(err, 'No error');
+            assert.notEqual(true, result, 'elenco sevizio restituito correttamente');
+            assert.end();
+        });
+
+});
+
+
+
+//testing elencoServizi
+test('Test elencoServizi: elenco servizi restituito correttamente',function(assert){
+    request(app)
+        .get('/elencoServizi')
+        .expect('Content-Type', "text/html; charset=utf-8")
+        .expect(200)
+        .end(function (err,res){
+            console.log(res.body.length);
+            var elencoServizi = res.body.length;
+            var result = false;
+            if (elencoServizi == 0) {
+                result = true;
+            }
+
+            assert.error(err, 'No error');
+            assert.notEqual(true, result, 'elenco sevizio restituito correttamente');
+            assert.end();
+        });
+
+});

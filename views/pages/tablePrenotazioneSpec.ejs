@@ -1,0 +1,47 @@
+<include src="../../server.js"> </include>
+
+<% prenotazione.forEach(prenotazione=> { %>
+<!-- mettere a posto css-->
+<div class="container" style="text-align: center;">
+    <div>
+       
+        
+        <!--<h3>Tipologia prenotata</h3>-->
+        <b><%= prenotazione.nome_tipologia %>
+
+        <h5>Numero di Conferma: </h5> <b><%= prenotazione.id_prenotazione%></b>
+
+        <h4>Data di prenotazione: </h4> <b><%= prenotazione.data_prenotazione%></b>
+
+        <h4>Quantità:</h4> <b><%= prenotazione.quantita%></b>
+        <h4>Numero di persone</h4> <b><%= prenotazione.numero_massimo_persone%></b>
+
+        <h3>Informazioni cliente</h3>
+        <b><%= prenotazione.nome%>  </b>  <b><%= prenotazione.cognome%></b>
+        <h4>Recapito telefonico:    </h4> <b><%= prenotazione.numero_telefono%></b>
+        <h4>Contatto email:         </h4> <b><%= prenotazione.email%></b>
+        <h4>Valutazione:            </h4> <b> XXX </b>
+    </div>
+
+    <div >
+        <button onclick="eliminaPrenotazione('<%= prenotazione.id_prenotazione %>')"> Annulla Prenotazione </button>
+    </div>
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script>
+      function eliminaPrenotazione(id_prenotazione){
+        url = '/prenotazioni/prenotazione_spec/annulla?idP='.concat(id_prenotazione);
+        console.log("test "+id_prenotazione);
+        $.ajax({
+          url : url,
+          method : 'delete',
+          success: function(){
+                // location.reload();
+                document.location.href = "/prenotazioni";
+            }
+        })
+       }
+    </script>
+</div> 
+<% }) %>

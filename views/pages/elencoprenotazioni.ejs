@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="../img/1.ico">
+        <%- include('style');%>
+        <%- include('../partials/header');%>
+    </head>
+    <body style="text-align: center;">
+        <div >
+        <h1  class="h1" type="text" >Book&Party</h1>
+        </div>
+        <%UTLOC.forEach(r=>{%>   
+            <a href="infopren?id=<%=r.id_prenotazione%>&utente=<%=utente%>" style="color:black">
+                    <div class="padding">
+                        <table class="c">
+                                <tr>
+                                    <td class="table">
+                                        <img src="/../img/<%=r.id_locale%>.jpg" >
+                                    </td>
+                                    <td style="min-width: 150px; display: inline-block;">
+                                    <table style="font-size: 250%;">
+                                        
+                                        <tr>
+                                            <td  style="font-size: 250%;"><b><%=r.nome_locale%></b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 150%;"><b>Data: <%=r.data_prenotazione%></b></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipologia: <%=r.nome_tipologia%></td>
+                                        </tr>
+                                    </table>  
+                                    </td>
+    
+                                </tr>
+                        </table>
+                    </div>
+                </a>
+                <%})%>               
+                
+    </body>
+</html>

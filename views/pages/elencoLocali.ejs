@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="well">
+                    <h3>Locali</h3>
+                    <%- include("tabellaLocali", {locali}); %>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+      function idLocale(id_locale){
+        url = '/modificaLocale?id='.concat(id_locale)
+        document.location.href=url;
+      }
+    </script>
+</body>
+
+</html>

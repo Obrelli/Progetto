@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+
+        <meta content="../img/1.ico">
+        <%- include('style');%>
+        <link rel="icon" type="image/x-icon" href="../img/<%=rows[0].nome_locale%>.ico" >
+    </head>
+    <body style="text-align: center;">
+        <div >
+        <h1  class="h1" type="text" >Book&Party</h1>
+        </div>  
+        <div>
+            <input  type="text" style="text-align: center; font-size: 50px; width: 98%;" class="b" value="<%=rows[0].nome_locale%>">
+        </div>              
+            
+                
+                    <div class="padding" style="text-align: center;">
+                        <table class="a">
+                                <tr>
+                                    <td>
+
+                                    </td>
+                                    <td>
+                                        Sfoglia le foto
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+                                <tr  style="text-align: center;">
+                                    <td style="font-size: 300%; text-align: right;">
+                                        <
+                                    </td>
+                                    <td class="table">
+                                        <img src="/../img/<%=rows[0].id_locale%>.jpg" >
+                                    </td>
+                                    <td style="font-size: 300%; text-align: left;">
+                                        >
+                                    </td>
+                                </tr>                                
+                        </table>
+                    </div>
+                    <div class="padding" style="text-align: center;">
+                        <table class="a" >
+                            <tr>
+                                <td class="table">
+                                    <label><%=rows[0].descrizione%></label>
+                                </td>
+                            </tr>                               
+                        </table>
+                    </div>
+
+                    <%rr.forEach(rr=>{%>
+                    <div class="padding" style="text-align: center;">
+                        <table class="a" >
+                            <tr>
+                                <td>
+                                    <b>
+                                    Tipologia:
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table">
+                                    <label><%=rr.nome_tipologia%> - <%=rr.costo%>$</label>
+                                </td>
+                            </tr> 
+                            <tr>
+                                <td>
+                                    <b>
+                                    Servizi offerti:
+                                    </b>
+                                </td>
+                            </tr>
+                            <%r.forEach(r=>{%>
+                            <%if(rr.id_tipologia == r.id_tipologia){%>
+                                <tr>
+                                    <td class="table">
+                                        <label><%=r.tipo_servizio%> - <%=r.prezzo_servizio%>$</label>
+                                    </td>
+                                </tr>  
+                            <%}})%>                               
+                        </table>
+                    </div>
+                    <%})%>
+
+
+                    <div class="padding" style="text-align: center;">
+                        <a href="pren?id_locale=<%=rows[0].id_locale%>" style="color:black;text-decoration: none;">
+                            <div class='bottone'>
+                                PRENOTA
+                            </div>
+                        </a>
+                          
+                    </div>                   
+                
+    </body>
+</html>

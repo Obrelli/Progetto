@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="well">
+                    <h3>Servizi</h3>
+                    <%- include("tabellaServizi", {servizi}); %>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+      function idServizio(id_servizio){
+        url = '/modificaServizio?id='.concat(id_servizio)
+        document.location.href=url;
+      }
+    </script>
+</body>
+
+</html>

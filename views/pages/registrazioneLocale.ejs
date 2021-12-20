@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <div class="container">
+        <h1>Registrazione Locale</h1>
+        <form action="/api/registrazioneLocale" method="POST">
+            <div class="form-group">
+                <label for="firstName">Nome</label>
+                <input type="text" class="form-control" id="firstName" 
+                    placeholder="Inserisci il Nome" name="nome" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" 
+                    name="email" placeholder="Inserisci Indirizzo Email" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword" 
+                    name="password" placeholder="Inserisci Password" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputNumeroTelefono">Numero di telefono</label>
+                <input type="text" class="form-control" id="exampleInputNumeroTelefono" 
+                    name="telefono" placeholder="Inserisci Numero di telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputCitta">Città</label>
+                <input type="text" class="form-control" id="exampleInputCitta" 
+                    name="citta" placeholder="Inserisci città" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputIndirizzo">Indirizzo</label>
+                <input type="text" class="form-control" id="exampleInputIndirizzo" 
+                    name="indirizzo" placeholder="Inserisci Indirizzo" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Registra</button>
+        </form>
+  <script src="scriptForm.js"></script>
+</body>
+
+</html>

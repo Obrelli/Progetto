@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+        <div class="container">
+        <h1>Informazioni</h1>
+        <form action="/modificaServizio/aggiorna" method="POST">
+            <input type="hidden" class="form-control" id="id_servizi" name="id_servizi" value="<%=servizio[0].id_servizi %>">
+            <div class="form-group">
+                <label for="tipoServizio">Tipo servizio</label>
+                  <select name="tipoServizio" id="tipoServizio">
+                  <option value="DJ" selected>DJ</option>
+                  <option value="Catering">Catering</option>
+                  <option value="Impianto audio">Impianto audio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="prezzoServizio">Prezzo Servizio</label>
+                <input type="text" class="form-control" id="prezzoServizio" 
+                    placeholder="Inserisci il prezzo del servizio" name="prezzoServizio" value="<%=servizio[0].prezzo_servizio %>">
+            </div>
+            <button type="submit" class="btn btn-primary">Modifica</button>
+        </form>
+        <br>
+        <button onclick="eliminaServizio('<%= servizio[0].id_servizi %>', '<%= servizio[0].id_tipologia %>')" class="btn btn-primary">Elimina</button>
+    </main>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+      function eliminaServizio(id_servizio, id_tipologia){
+        url = '/eliminaServizio?idS='.concat(id_servizio).concat('&idT=').concat(id_tipologia)
+        //console.log("mh");
+        $.ajax({
+          url : url,
+          method : 'delete',
+          success: function(){
+                // location.reload();
+                // document.location.href = "/elencoServizi?id=".concat(id_tipologia);
+          }
+        })
+        // document.location.href=url;
+      }
+    </script>
+</body>
+
+</html> 

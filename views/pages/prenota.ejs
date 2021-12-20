@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="../img/1.ico">
+        <%- include('style');%>
+        <link rel="icon" type="image/x-icon" href="../img/1.ico" >
+
+    </head>
+    <body>
+    <div>
+        <div >
+        <h1  class="h1" type="text" >Book&Party</h1>
+        </div>
+    </div>     
+    
+    <div>
+        <input  type="text" style="text-align: center; font-size: 50px; width: 98%;" class="b" value="<%=rows[0].nome_locale%>">
+    </div> 
+    <form method="post" action="/prenota">
+        <div class="padding" style="text-align: center;"></div>
+            <table class="a">
+                <tr>
+                    <td>Selezionare la tipologia desiderata:</td>                    
+                </tr>
+                <tr>
+                    <td>
+                        <select id="tip" name="tip" class="input" required>
+                            <option></option>
+                            <%rr.forEach(rr=>{%>                                              
+                            <option><%=rr.nome_tipologia%> - <%=rr.costo%>$</option>
+                            <%})%>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="padding" style="text-align: center;"></div>
+            <table class="a">
+                <tr>
+                    <td>Selezionare una data:</td>                    
+                </tr>
+                <tr>
+                    <td><input class="input" id="data" name="data" type="date" required></td>                
+                </tr>
+            </table>
+        </div>
+        <div class="padding" style="text-align: center;"></div>
+            <table class="a">
+                <tr>                    
+                    <td>Selezionare la quantità desiderata:</td>
+                </tr>
+                <tr>
+                    <td><input class="input" type="number" id="quantita" name="quantita" required></td>                
+                </tr>
+            </table>
+        </div>
+        
+        <input  id="id_locale" name="id_locale" value="<%=rows[0].id_locale%>" style="display : none">
+        <br><br>
+        <button class="bottone">PRENOTA</button>
+        <br>
+        
+    </form>
+    </body>
+</html>

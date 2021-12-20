@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+        <%- include('../partials/header'); %>
+    </header>
+
+    <main>
+        <div class="container">
+        <h1>Informazioni</h1>
+        <form action="/modificaTipologia/aggiorna" method="POST">
+            <input type="hidden" class="form-control" id="id_tipologia" name="id_tipologia" value="<%=tipologia[0].id_tipologia %>">
+            <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=tipologia[0].id_locale %>">
+            <div class="form-group">
+                <label for="firstName">Nome</label>
+                <input type="text" class="form-control" id="firstName" 
+                    placeholder="Inserisci il Nome" name="nome" value="<%=tipologia[0].nome_tipologia %>">
+            </div>
+            <div class="form-group">
+                <label for="quantita">Quantità</label>
+                <input type="text" class="form-control" id="quantita" 
+                    placeholder="Inserisci la quantità" name="quantita" value="<%=tipologia[0].quantita %>">
+            </div>
+            <div class="form-group">
+                <label for="costo">Costo</label>
+                <input type="text" class="form-control" id="costo" 
+                    name="costo" placeholder="Inserisci il costo" value="<%=tipologia[0].costo %>">
+            </div>
+            <div class="form-group">
+                <label for="nMaxPersone">Numero massimo di persone</label>
+                <input type="text" class="form-control" id="nMaxPersone" 
+                    name="nMaxPersone" placeholder="Inserisci il numero massimo di persone" value="<%=tipologia[0].numero_massimo_persone %>">
+            </div>
+            <div class="form-group">
+                <label for="zonaAperta">Zona aperta</label>
+                <br>
+                <% if(tipologia[0].zona_aperta == 1){%>
+                  <input type="radio" id="vero" name="zona_aperta" value="1" checked>
+                  <label for="vero">Sì</label>
+                  <br>
+                  <input type="radio" id="falso" name="zona_aperta" value="0">
+                  <label for="falso">No</label>
+                <%}%>
+                <% if(tipologia[0].zona_aperta == 0){%>
+                  <input type="radio" id="vero" name="zona_aperta" value="1">
+                  <label for="vero">Sì</label>
+                  <br>
+                  <input type="radio" id="falso" name="zona_aperta" value="0" checked>
+                  <label for="falso">No</label>
+                <%}%>
+            </div>
+            <button type="submit" class="btn btn-primary">Modifica</button>
+        </form>
+        <br>
+        <button onclick="eliminaTipologia('<%= tipologia[0].id_tipologia %>', '<%= tipologia[0].id_locale %>')" class="btn btn-primary">Elimina</button>
+        <br><br>
+        <button onclick="aggiungiServizi('<%= tipologia[0].id_tipologia %>')" class="btn btn-primary">Aggiungi servizi</button>
+        <br><br>  
+        <button onclick="elencoServizi('<%= tipologia[0].id_tipologia %>')" class="btn btn-primary">Elenco servizi</button>
+    </main>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script>
+    function eliminaTipologia(id_tipologia, id_locale){
+        url = '/eliminaTipologia?idT='.concat(id_tipologia).concat("&idL=").concat(id_locale)
+        $.ajax({
+          url : url,
+          method : 'delete',
+          success: function(){
+                // location.reload();
+                document.location.href = "/tipologie?id=".concat(id_locale);
+            }
+        })
+    }
+    function aggiungiServizi(id_tipologia){
+        url = '/aggiungiServizi?id='.concat(id_tipologia)
+        document.location.href=url;
+    }
+    function elencoServizi(id_tipologia){
+        url = '/elencoServizi?id='.concat(id_tipologia)
+        document.location.href=url;
+    }
+  </script>
+</body>
+
+</html> 

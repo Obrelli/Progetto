@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+    <!-- <div class="container">
+      <button class="btn btn-primary" onclick="stampaUtenti()">Leggi</button>
+      <a class="nav-link" href="/api/utenti">Leggi</a>
+    </div>
+    <div class="container">
+      <form action="/api/utenti">
+        <input type="submit" value="Leggi"></input>
+      </form>
+    </div> -->
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <div class="container">
+      <button onclick="location.href='/gestioneAccount'">Gestione account</button>
+    </div>
+    <div class="container">
+      <button onclick="location.href='/aggiungiTipologia'">Aggiungi tipologia</button>
+    </div>
+    <div class="container">
+      <button onclick="location.href='/tipologie'">Elenco tipologie</button>
+    </div>
+    <div>
+      <button onclick="location.href='/prenotazioni'">Elenco Prenotazioni Locale</button>
+    </div>
+</body>
+
+</html>

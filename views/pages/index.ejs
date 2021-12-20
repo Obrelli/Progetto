@@ -1,14 +1,30 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <script src="../../server.js"></script>
-    </head>
-    <body>
-        <form id="log" method="get" action="/login">
-            <input type="text" id="email"  name="email"> 
-            <input type="password" id="passw"  name="password"> 
-            <input type="submit" id="submit"  name="submit"> 
-        </form>
-        
-    </body>
+<html lang="en">
+
+<head>
+    <title>Index</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<body>
+    <!-- <div class="container">
+      <button class="btn btn-primary" onclick="stampaUtenti()">Leggi</button>
+      <a class="nav-link" href="/api/utenti">Leggi</a>
+    </div>
+    <div class="container">
+      <form action="/api/utenti">
+        <input type="submit" value="Leggi"></input>
+      </form>
+    </div> -->
+    <div class="container">
+      <button onclick="location.href='/login'">Accedi</button>
+    </div>
+    <div class="container">
+      <button onclick="location.href='/registrazioneUtente'">Registrati</button>
+    </div>
+  <script src="scriptForm.js"></script>
+</body>
+
 </html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+  <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <div class="container">
+        <h1>Aggiungi Servizio</h1>
+        <form action="/aggiungiServizio" method="POST">
+            <input type="hidden" class="form-control" id="id_tipologia" name="id_tipologia" value="<%=id_tipologia %>">
+            <div class="form-group">
+                <label for="tipoServizio">Tipo servizio</label>
+                <select name="tipoServizio" id="tipoServizio">
+                  <option value="DJ">DJ</option>
+                  <option value="Catering">Catering</option>
+                  <option value="Impianto audio">Impianto audio</option>
+                </select>
+                <!-- <input type="text" class="form-control" id="tipoServizio" placeholder="Inserisci il tipo di servizio" name="tipoServizio"> -->
+            </div>
+            <div class="form-group">
+                <label for="prezzoServizio">Prezzo servizio</label>
+                <input type="text" class="form-control" id="prezzoServizio" 
+                    placeholder="Inserisci il prezzo del servizio" name="prezzoServizio">
+            </div>
+            <button type="submit" class="btn btn-primary">Aggiungi</button>
+        </form>
+</body>
+
+</html>

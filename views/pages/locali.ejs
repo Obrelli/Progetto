@@ -1,15 +1,78 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <h5>Ciao</h5>
-        <h1>
-        <script>
-            
-
-        </script>
-        </h1>
+        <meta content="../img/1.ico">
+        <%- include('style');%>
+        <link rel="icon" type="image/x-icon" href="../img/1.ico" >
     </head>
     <body>
-        
+    <div>
+        <div >
+        <h1  class="h1" type="text" >Book&Party</h1>
+        </div>
+        <div class="center">
+        <table style="width: 100%;">
+           <tr>
+               <th>
+                   <td class="e">
+                       <%=città%>
+                   </td>
+               </th>
+               <th>
+                   <td class="e">
+                   </td>
+               </th>
+               <th>
+                    <td class="e">
+                     <%=np%>
+                    </td>
+            </th>
+        </table>
+    </div>    
+    <div class="padding">
+        <input  type="text" class="b" style="width: 98%; text-align: left;" placeholder="Filtri">
+    </div>
+    
+        <div style="text-align: left;" class="padding"> <input type="text" class="b" value="<%=n[0].num%> locali trovati"> </div>
+   
+          
+        <%idloc.forEach(idloc=>{%>
+            <a href="info?id=<%=idloc.id_locale%>" style="color:black">
+                <div class="padding">
+                    <table class="c">
+                            <tr>
+                                <td class="table">
+                                    <img src="/../img/<%=idloc.id_locale%>.jpg" >
+                                </td>
+                                <td style="min-width: 150px; display: inline-block;">
+                                <table style="font-size: 250%;">
+                                    <tr>
+                                        <td style="font-size: 300%;"><b><%=idloc.nome_locale%></b></td>
+                                    </tr>
+                                    
+                                    <%rr.forEach(rr=>{%>
+                                    
+                                    <tr>
+                                        <%if(rr.id_locale == idloc.id_locale){%>                                        
+                                        <td><%=rr.nome_tipologia%> - max 
+                                            <%rnp.forEach(rnp=>{%>
+                                                <%if(rnp.id_tipologia == rr.id_tipologia){%>
+                                                <%=rnp.np%> 
+                                            <%}})%>
+                                            
+                                            persone
+                                        </td>                      
+                                        <%}%>
+                                    </tr>
+                                    <%})%>
+                                </table>  
+                                </td>
+
+                            </tr>
+                    </table>
+                </div>
+            </a>
+            <%})%>   
+        </div>
     </body>
 </html>

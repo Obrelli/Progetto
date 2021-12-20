@@ -1,0 +1,21 @@
+<table class="table table-striped table-dark">
+    <thead class="thead-dark">
+        <tr>
+            <th>Tipo servizio</th>
+            <th>Prezzo servizio</th>
+          </tr>
+    </thead>
+    <tbody>
+        <% servizi.forEach(servizio=> { %>
+            <tr onclick="idServizio('<%= servizio.id_servizi %>')">
+            <!-- <tr action="/modificaservizio?id='<%= servizio.id_servizio %>'" value="<%= servizio.id_servizio %>"> -->
+                <td>
+                    <%= servizio.tipo_servizio %>
+                </td>
+                <td>
+                    <%= servizio.prezzo_servizio %>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
+  </table>

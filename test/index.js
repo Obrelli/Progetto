@@ -73,11 +73,6 @@ test('TEST modificaServizio: elenco servizi restituito',function(assert){
 
 //testing elencoServizi
 test('TEST elencoServizi: elenco servizi restituito',function(assert){
-    
-});
-
-//testing modificaServizio
-test('Test modificaServizio: elenco servizi restituito correttamente',function(assert){
     request(app)
         .get('/elencoServizi')
         .expect('Content-Type', "text/html; charset=utf-8")

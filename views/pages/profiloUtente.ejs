@@ -5,36 +5,35 @@
   
 </head>
 
-<body class="container">
+<body class="center">
 
-
-  <div >
     <h1  class="h1" type="text" >PROFILO</h1>
-    </div>
     <%- include('../partials/head')%>
-<br><br>
-  <table class="center" style="font-size: 70%; width: 100%;">
+<br><br><br>
+  <table class="center" style="font-size: 70%; width: 80%;">
     <tr>
       <td>
         <div class="padding">
-          <button class="bottone" style="min-width: 72%; max-width: 80%;" onclick="location.href='/gestioneAccount'">Gestione account</button>
+          <button class="bottone" style="min-width: 40%; max-width: 80%; padding:5%" onclick="location.href='/gestioneAccount'">GESTIONE ACCOUNT</button>
       </div>
       </td>
       <td>
         <div class="padding">
-          <button  class="bottone" style="min-width: 80%; max-width: 80%;" onclick="location.href='/registrazioneLocale'">Registra Locale</button>
+          <button  class="bottone" style="min-width: 40%; max-width: 80%; padding:5%" onclick="location.href='/registrazioneLocale'">REGISTRA LOCALE</button>
       </div>
       </td>
       <td>
         <% if(isGestore == 1){%>
           <div class="padding">
-              <button class="bottone" style="min-width: 80%; max-width: 80%;" onclick="eliminaGestore()">Elimina Gestore</button>
+              <button class="bottone" style="min-width: 40%; max-width: 80%; padding:5%" onclick="eliminaGestore()">ELIMINA GESTORE</button>
            </div>
       <% } %>
       </td>   
   </tr>
   </table>  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
+      
         function eliminaGestore(){
           url = '/eliminaGestore';
           console.log("test");

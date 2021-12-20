@@ -2,45 +2,70 @@
 <html lang="en">
 
 <head>
-    <%- include('../partials/head'); %>
+    <%- include('style'); %>
 </head>
 
-<body class="container">
-    <!-- <div class="container">
-      <button class="btn btn-primary" onclick="stampaUtenti()">Leggi</button>
-      <a class="nav-link" href="/api/utenti">Leggi</a>
-    </div>
-    <div class="container">
-      <form action="/api/utenti">
-        <input type="submit" value="Leggi"></input>
-      </form>
-    </div> -->
-    <header>
-        <%- include('../partials/header'); %>
-    </header>
-    
-    <div>
-      <h1>Ricerca</h1>
+<body style="text-align: center;">   
 
-      <form method="get" action="/ricerca">
-          <input type="text" id="città" name="città" placeholder="città">
-          <input type="date" id="data" name="data" value="data">
-          <input type="number" id="np" name="np" value="np">
-          <input type="submit" id="ric" name="ric" value="ricerca">
-      </form>
-    </div>
+    <h1 class="h1">RICERCA</h1>
+
     
-    <div class="container">
-      <button onclick="location.href='/profiloUtente'">Profilo</button>
+    <!--Link home-->
+    <div style="text-align: center;">
+    <table style="margin: 0 auto; font-size: 80%;">
+      <tr>
+        <td style="min-width: 160px;">
+          <b><a href="/home" style="color:purple;text-decoration: none;">Homepage</a></b>
+        </td>
+        <td style="min-width: 120px;">
+          <a href="/profiloUtente" style="color:purple;text-decoration: none;"><b>Profilo</b></a>
+        </td>
+        <td style="min-width: 290px;">
+          <a href="/elencopre" style="color:purple;text-decoration: none;"><b>Prenotazioni effettuate</b></a>
+        </td>
+        <% if(isGestore == 1){%>
+          <td style="min-width: 150px;">
+            <a href="/locali" style="color:purple;text-decoration: none;"><b>Gestione locali</b></a>
+          </td>
+        <% } %>
+      </tr>
+    </table>
   </div>
-  <div class="container">
-    <button onclick="location.href='/elencopre'">Prenotazioni Effettuate</button>
-</div>
-    <% if(isGestore == 1){%>
-    <div class="container">
-      <button onclick="location.href='/locali'">Gestione locali</button>
-    </div>
-    <% } %>
+<!---->
+
+    <br>
+    <table class="a" style="border: none">
+      <form method="get" action="/ricerca">
+          <div>
+              <tr>
+                  <td>
+                    <input style="width: 70%;" class="b" type="text" id="città" name="città" placeholder="città">    
+                  </td>
+                  <td>
+                    <input style="width: 90%;" class="b" type="date" id="data" name="data" value="data" >
+                  </td>
+                  <td>
+                    <input style="width: 70%;" class="b" type="number" id="np" name="np" value="np" placeholder="numero di persone">
+                  </td>
+              </tr>
+          </div>
+                    
+          <div>
+            <tr>
+              <td>
+                  
+              </td>
+                  <td>
+                      <button type="submit" style="width: 50%; height: 70%;" class="bottone">RICERCA</button>
+                  </td>
+                <td>
+                    
+                </td>
+            </tr>
+          </div>            
+      </form>
+    </table>
+    
 </body>
 
 </html>

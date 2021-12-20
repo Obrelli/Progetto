@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <%- include('../partials/head'); %>
+    
 </head>
 
 <body class="container">
@@ -15,21 +15,42 @@
         <input type="submit" value="Leggi"></input>
       </form>
     </div> -->
+    <h1 class="h1">Book&Party</h1>
     <header>
-        <%- include('../partials/header'); %>
-    </header>
-    <div class="container">
-      <button onclick="location.href='/gestioneAccount'">Gestione account</button>
-    </div>
-    <div class="container">
-      <button onclick="location.href='/aggiungiTipologia'">Aggiungi tipologia</button>
-    </div>
-    <div class="container">
-      <button onclick="location.href='/tipologie'">Elenco tipologie</button>
-    </div>
-    <div>
-      <button onclick="location.href='/prenotazioni'">Elenco Prenotazioni Locale</button>
-    </div>
+        <%- include('../partials/head'); %>
+    </header><br><br>
+    <table class="center" style="width: 100%;">
+      <tr>
+        <td>
+          <a onclick="location.href='/gestioneAccount'">
+            <p style="width: 65%; padding:10%" class="bottone">
+              GESTIONE ACCOUNT
+            </p>
+          </a>
+        </td>
+        <td>
+          <a onclick="location.href='/aggiungiTipologia'">
+            <p style="width: 60%; padding:10%" class="bottone">
+              AGGIUNGI TIPOLOGIA
+            </p>
+          </a>
+        </td>
+        <td>
+          <a onclick="location.href='/tipologie'">
+            <p style="width: 65%; padding:10%" class="bottone">
+              ELENCO TIPOLOGIE
+            </p>
+          </a>
+        </td>
+        <td>
+          <a onclick="location.href='/prenotazioni'">
+            <p style="width: 45%; padding: 4%" class="bottone">
+              ELENCO PRENOTAZIONI LOCALE
+            </p>
+          </a>
+        </td>
+      </tr>
+    </table>
 </body>
 
 </html>

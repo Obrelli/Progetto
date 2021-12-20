@@ -4,12 +4,13 @@
 
 
         <meta content="../img/1.ico">
-        <%- include('style');%>
+        
     </head>
     <body style="text-align: center;">
         <div >
         <h1  class="h1" type="text" >Book&Party</h1>
         </div> 
+        <%- include('../partials/head');%>
         <div class="padding">
             <table>
                 <tr>
@@ -23,7 +24,7 @@
             </table>
         </div> 
         <div class="padding">
-            <input  type="text" style="text-align: center; font-size: 50px; width: 98%;" class="b" value="<%=UTLOC[0].nome_locale%>">
+            <input  type="text" style="text-align: center; width: 98%;" class="b" value="<%=UTLOC[0].nome_locale%>">
         </div>              
         <div>
             <table>

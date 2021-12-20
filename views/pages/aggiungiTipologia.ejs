@@ -1,48 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <%- include('../partials/head'); %>
-</head>
+<body class="center">
+    <h1 class="h1">AGGIUNGI TIPOLOGIA</h1>
+      
+        <%- include('../partials/head'); %>
+        <form action="/aggiungiTipologia" method="POST" style="margin-bottom: 5%;">
+            <table style="width: 100%;" class="center">
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="firstName">Nome</label><br>
+                    <input type="text" class="b" style="width: 40%;" id="firstName" 
+                        placeholder="Inserisci il Nome" name="nome">
+                    </td>
+                </tr>
+                <tr>
+                    
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="quantita">Quantità</label><br>
+                        <input type="text" class="b" style="width: 40%;" id="quantita" 
+                            placeholder="Inserisci la quantità" name="quantita">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="costo">Costo</label><br>
+                    <input type="text" class="b" style="width: 40%;" id="costo" 
+                        name="costo" placeholder="Inserisci il costo">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="nMaxPersone">Numero massimo di persone</label><br>
+                    <input type="text" class="b" style="width: 40%;" id="nMaxPersone" 
+                        name="nMaxPersone" placeholder="Inserisci il numero massimo di persone">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="zonaAperta">Zona aperta</label>
+                    <br>
+                    <input type="radio" id="vero" name="zona_aperta" value="true" checked>
+                    <label for="vero">Sì</label>
+                    <br>
+                    <input type="radio" id="falso" name="zona_aperta" value="false">
+                    <label for="falso">No</label>
+                    </td>
+                </tr>
 
-<body class="container">
-  <header>
-        <%- include('../partials/header'); %>
-    </header>
-    <div class="container">
-        <h1>Aggiungi Tipologia</h1>
-        <form action="/aggiungiTipologia" method="POST">
-            <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=id_locale %>">
-            <div class="form-group">
-                <label for="firstName">Nome</label>
-                <input type="text" class="form-control" id="firstName" 
-                    placeholder="Inserisci il Nome" name="nome">
-            </div>
-            <div class="form-group">
-                <label for="quantita">Quantità</label>
-                <input type="text" class="form-control" id="quantita" 
-                    placeholder="Inserisci la quantità" name="quantita">
-            </div>
-            <div class="form-group">
-                <label for="costo">Costo</label>
-                <input type="text" class="form-control" id="costo" 
-                    name="costo" placeholder="Inserisci il costo">
-            </div>
-            <div class="form-group">
-                <label for="nMaxPersone">Numero massimo di persone</label>
-                <input type="text" class="form-control" id="nMaxPersone" 
-                    name="nMaxPersone" placeholder="Inserisci il numero massimo di persone">
-            </div>
-            <div class="form-group">
-                <label for="zonaAperta">Zona aperta</label>
-                <br>
-                <input type="radio" id="vero" name="zona_aperta" value="true" checked>
-                <label for="vero">Sì</label>
-                <br>
-                <input type="radio" id="falso" name="zona_aperta" value="false">
-                <label for="falso">No</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Registra</button>
+                <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=id_locale %>">
+                <div class="form-group">
+                    
+                </div>
+                <div class="form-group">
+                    
+                </div>
+                <div class="form-group">
+                    
+                </div>
+                <div class="form-group">
+                    
+                </div>
+                <div class="form-group">
+                    
+                </div>
+            </table>
+            <button  type="submit" class="bottone">AGGIUNGI</button>
         </form>
   <script src="scriptForm.js"></script>
 </body>

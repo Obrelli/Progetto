@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <%- include('../partials/head'); %>
-</head>
 
 <body class="container">
   <header>
-        <%- include('../partials/header'); %>
+        <h1 class="h1">SERVIZI</h1>
+        <%- include('../partials/head'); %>
     </header>
 
     <main>
         <div class="row">
             <div class="col-sm-8">
                 <div class="well">
-                    <h3>Servizi</h3>
+                    
                     <%- include("tabellaServizi", {servizi}); %>
                 </div>
             </div>

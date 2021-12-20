@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-    <%- include('../partials/head'); %>
+    
 </head>
 
 <body class="container">
@@ -13,17 +13,13 @@
         <div class="row">
             <div class="col-sm-8">
                 <div class="well">
-                    <h3>Prenotazioni</h3>
+                    <h1 class="h1">PRENOTAZIONI</h1>
+                    <%- include('../partials/head'); %>
                     <%- include("tablePrenotazioniLocale", {prenotazioni}); %>
                 </div>
             </div>
         </div>
     </main>
-
-    <footer>
-        <%- include('../partials/footer'); %>
-    </footer>
-
 </body>
 
 </html>

@@ -3,7 +3,10 @@ var bodyParser = require("body-parser");
 const app = express();
 var session = require("express-session");
 const alert = require("alert");
+var cors = require("cors");
 
+
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 //----------------------------------------------------
@@ -18,9 +21,9 @@ const swaggerOptions = {
             description: "API documentation",
             contact: {
                 name: "Gruppo G31"
-             },
-             servers: ["http://localhost:3535/"]
-         }
+            },
+            servers: ["http://localhost:3535/"]
+        }
     },
     apis: ["server.js"]
 };
@@ -58,7 +61,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "book",
+    database: "book&party",
 });
 
 connection.connect((err) => {
@@ -265,6 +268,37 @@ app.get("/registrazioneUtente", function (req, res) {
     res.render("pages/registrazioneUtente");
 });
 
+/**
+* @swagger
+* 
+* 
+* /tipologie:
+*   get:
+*     tags:  
+*     - "Locale"
+*     - "Gestore"
+*     summary: Permette di visualizzare l'elenco delle tipologie di un certo locale.
+*     parameters:
+*     - in: "session" 
+*       name: "is_locale"
+*       description: "Indica se l'account è di tipo locale o no"
+*       required: true
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "In caso l'utente sia di tipo locale viene usato l'id_utente della sessione per l'id del locale"
+*       required: true
+*     - in: "query" 
+*       name: "id"
+*       description: "In caso l'utente sia di tipo gestore l'id del locale sarà passato tramite url"
+*       required: false
+*     responses: 
+*         "200":
+*           description: "Tipologie visualizzate correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*
+*/
+
 app.get("/tipologie", async function (req, res) {
     console.log(req.session)
     if(req.session.isLocale == 1){
@@ -292,12 +326,58 @@ app.get("/tipologie", async function (req, res) {
     }
 });
 
+/**
+* @swagger
+* 
+* 
+* /registrazioneLocale:
+*   get:
+*     tags:  
+*     - "Cliente"
+*     - "Gestore"
+*     summary: Permette il render della pagina per la registrazione di un locale.
+*     responses: 
+*         "200":
+*           description: "Pagina renderizzata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*
+*/
+
 app.get("/registrazioneLocale", async function (req, res) {
     res.render("pages/registrazioneLocale");
 });
 
 //---------------------------------------------
 //sezione Homepage dei vari utenti
+/**
+* @swagger
+* 
+* 
+* /home:
+*   get:
+*     tags:  
+*     - "Cliente"
+*     - "Gestore"
+*     - "Locale"
+*     summary: Reindirizza alla corretta homepage in base al tipo di utente.
+*     parameters:
+*     - in: "session" 
+*       name: "isLocale"
+*       description: "Indica se l'account è di tipo locale o no"
+*       required: true
+*     - in: "session" 
+*       name: "isTipoGestore"
+*       description: "Indica se l'utente è di tipo gestore o no"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Reindirizzamento eseguito correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*
+*/
+
 app.get("/home", async function (req, res){
     if(req.session.isLocale == 0){
       isGestore = req.session.isTipoGestore;
@@ -307,18 +387,83 @@ app.get("/home", async function (req, res){
     }
   })
   
+  /**
+  * @swagger
+  * 
+  * 
+  * /homepage:
+  *   get:
+  *     tags:  
+  *     - "Gestore"
+  *     - "Cliente"
+  *     summary: Permette il render della homepage.
+  *     parameters:
+  *     - in: "session" 
+  *       name: "isTipoGestore"
+  *       description: "Indica se l'utente è di tipo gestore o no"
+  *       required: true
+  *     responses: 
+  *         "200":
+  *           description: "Homepage visualizzata correttamente"
+  *         "400":
+  *           description: "Errore nell'esecuzione dell'API" 
+  *
+  */
+  
   app.get("/homepage", async function (req, res) {
       isGestore = req.session.isTipoGestore
       res.render("pages/homepage", {isGestore});
   });
   
+  /**
+  * @swagger
+  * 
+  * 
+  * /homepageLocale:
+  *   get:
+  *     tags:  
+  *     - "Locale"
+  *     summary: Permette il render della homepage per i clienti di tipo locale.
+  *     responses: 
+  *         "200":
+  *           description: "HomepageLocale visualizzata correttamente"
+  *         "400":
+  *           description: "Errore nell'esecuzione dell'API" 
+  *
+  */
+
   app.get("/homepageLocale", async function (req, res) {
       res.render("pages/homepageLocale");
   });
   //---------------------------------------------
+  /**
+  * @swagger
+  * 
+  * 
+  * /gestioneAccount:
+  *   get:
+  *     tags:  
+  *     - "Cliente"
+  *     - "Gestore"
+  *     - "Locale"
+  *     summary: Reindirizza alla corretta pagina per permettere all'utente di modificare le informazioni del proprio account.
+  *     parameters:
+  *     - in: "session"
+  *       name: "isLocale"
+  *       description: "Indica se l'account è di tipo locale o no"
+  *       required: true
+  *     - in: "session" 
+  *       name: "id_utente"
+  *       description: "Indica l'id dell'utente"
+  *       required: true
+  *     responses: 
+  *         "200":
+  *           description: "Informazioni modificate correttamente"
+  *         "400":
+  *           description: "Errore nell'esecuzione dell'API" 
+  */
 
   app.get("/gestioneAccount", async function (req, res) {
-    // Find all employees
     console.log("ID UTENTE: " + req.session.id_utente);
     if (req.session.isLocale == 0) {
         console.log("QUESTO UTENTE È UN CLIENTE/GESTORE");
@@ -329,8 +474,6 @@ app.get("/home", async function (req, res){
 
                 console.log("Data received from Db:");
                 console.log(utente);
-                // utente[0]["data_di_nascita"] = new Date();
-                // utente[0]["data_di_nascita"].toISOString().split('T')[0];
                 utente[0]["data_di_nascita"] = formatDate(
                     utente[0]["data_di_nascita"]
                 );
@@ -346,22 +489,58 @@ app.get("/home", async function (req, res){
 
                 console.log("Data received from Db:");
                 console.log(utente);
-                // utente[0]["data_di_nascita"] = new Date();
-                // utente[0]["data_di_nascita"].toISOString().split('T')[0];
-                utente[0]["data_di_nascita"] = formatDate(
-                    utente[0]["data_di_nascita"]
-                );
                 res.render("pages/gestioneAccountLocale", { utente });
             }
         );
     }
 });
 
+  /**
+  * @swagger
+  * 
+  * 
+  * /aggiungiTipologia:
+  *   get:
+  *     tags:  
+  *     - "Gestore"
+  *     - "Locale"
+  *     summary: Reindirizza alla pagina aggiungiTipologia e passa l'id_locale ottenuto tramite url.
+  *     parameters:
+  *     - in: "query" 
+  *       name: "id"
+  *       description: "Indica l'id del locale a cui vogliamo aggiungere una tipologia"
+  *     responses: 
+  *         "200":
+  *           description: "Pagina reindirizzata correttamente"
+  *         "400":
+  *           description: "Errore nell'esecuzione dell'API" 
+  */
+
 app.get("/aggiungiTipologia", async function (req, res) {
-  console.log(req.query.id);
   id_locale = req.query.id
   res.render("pages/aggiungiTipologia", {id_locale});
 });
+
+/**
+  * @swagger
+  * 
+  * 
+  * /modificaTipologia:
+  *   get:
+  *     tags:  
+  *     - "Locale"
+  *     - "Gestore"
+  *     summary: Reindirizza alla pagina modificaTipologia e passa l'id_tipologia ottenuto tramite url.
+  *     parameters:
+  *     - in: "query"
+  *       name: "id"
+  *       description: "Indica l'id della tipologia di cui vogliamo modificare le informazioni"
+  *     responses: 
+  *         "200":
+  *           description: "Pagina reindirizzata correttamente"
+  *         "400":
+  *           description: "Errore nell'esecuzione dell'API" 
+*/
 
 app.get("/modificaTipologia", async function (req, res) {
     console.log(req.query.id);
@@ -370,16 +549,41 @@ app.get("/modificaTipologia", async function (req, res) {
         (err, tipologia) => {
             if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(tipologia);
             res.render("pages/modificaTipologia", { tipologia });
-            // res.render("pages/gestioneAccountLocale", { utente });
         }
     );
 });
 
+/**
+* @swagger 
+* 
+* /eliminaTipologia:
+*   delete:
+*     tags:  
+*     - "Locale"  
+*     - "Gestore"
+*     summary: Permette all'utente di tipo Locale di eliminare una determinata tipologia.
+*     parameters:
+*     - in: "query" 
+*       name: "idT"
+*       description: "Indica l'id della tipologia che si vuole eliminare"
+*       required: true
+*     - in: "query" 
+*       name: "idL"
+*       description: "Indica l'id del locale al quale la tipologia appartiene"
+*       required: true
+*     - in: "session" 
+*       name: "isTipoGestore"
+*       description: "Indica se l'utente è un gestore o no"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Tipologia eliminata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.delete("/eliminaTipologia", (req, res) => {
-  console.log(req.session)
     console.log("ID DA ELIMINARE " + req.query.idT);
     if(req.session.isTipoGestore == 1){
       connection.query(
@@ -434,16 +638,6 @@ app.delete("/eliminaTipologia", (req, res) => {
                     }
                 );
               }
-              // connection.query(
-              //     `SELECT * FROM tipologia WHERE id_locale = "${req.query.idL}"`,
-              //     (err, tipologie) => {
-              //         if (err) throw err;
-
-              //         console.log("Data received from Db:");
-              //         console.log(tipologie);
-              //         res.render("pages/tipologie", { tipologie });
-              //     }
-              // );
           }
       );
     }
@@ -451,10 +645,30 @@ app.delete("/eliminaTipologia", (req, res) => {
 
 app.get("/aggiungiServizi", (req, res) => {
     console.log(req.session);
-    console.log("ID DELLA TIPOLOGIA " + req.query.id);
     id_tipologia = req.query.id;
     res.render("pages/aggiungiServizio", { id_tipologia });
 });
+
+/**
+* @swagger 
+* 
+* /elencoServizi:
+*   get:
+*     tags:  
+*     - "Locale"  
+*     - "Gestore"
+*     summary: Permette di visualizzare l'elenco dei servizi associati ad una tipologia.
+*     parameters:
+*     - in: "query" 
+*       name: "id"
+*       description: "Indica l'id della tipologia di cui vogliamo visualizzare i servizi"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Servizio visualizzati correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
 
 app.get("/elencoServizi", async function (req, res) {
     console.log(req.query.id);
@@ -463,26 +677,62 @@ app.get("/elencoServizi", async function (req, res) {
         (err, servizi) => {
             if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(servizi);
             res.render("pages/servizi", { servizi });
         }
     );
 });
 
+/**
+* @swagger 
+* 
+* /modificaServizio:
+*   get:
+*     tags:  
+*     - "Locale"
+*     - "Gestore"
+*     summary: Reindirizza alla pagina modificaServizio e passa l'id del servizio ottenuto tramite url.
+*     parameters:
+*     - in: "query" 
+*       name: "id"
+*       description: "Indica l'id del servizio che vogliamo andare a modificare"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Pagina reindirizzata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API"
+*/
+
 app.get("/modificaServizio", async function (req, res) {
-    console.log(req.query.id);
     connection.query(
         `SELECT * FROM servizi WHERE id_servizi = "${req.query.id}"`,
         (err, servizio) => {
             if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(servizio);
             res.render("pages/modificaServizio", { servizio });
         }
     );
 });
+
+/**
+* @swagger 
+* 
+* /locali:
+*   get:
+*     tags:  
+*     - "Gestore"  
+*     summary: Reindirizza alla pagina elencoLocali e passa le informazioni dei locali di proprietà del gestore.
+*     parameters:
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id del gestore"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Pagina reindirizzata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API"
+*/
 
 app.get("/locali", async function (req, res) {
   connection.query(
@@ -497,6 +747,26 @@ app.get("/locali", async function (req, res) {
   );
 });
 
+/**
+* @swagger 
+* 
+* /modificaLocale:
+*   get:
+*     tags:  
+*     - "Gestore"  
+*     summary: Reindirizza alla pagina modificaLocale e passa le informazioni del locale con l'id uguale a quello passato tramite url.
+*     parameters:
+*     - in: "query" 
+*       name: "id"
+*       description: "Indica l'id del locale che vogliamo modificare"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Pagina reindirizzata correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API"
+*/
+
 app.get("/modificaLocale", async function (req, res) {
   console.log(req.query.id);
   connection.query(
@@ -504,18 +774,37 @@ app.get("/modificaLocale", async function (req, res) {
       (err, locale) => {
           if (err) throw err;
 
-          console.log("Data received from Db:");
-          console.log(locale);
           res.render("pages/modificaLocale", { locale });
       }
   );
 });
 
+/**
+* @swagger 
+* 
+* /eliminaServizio:
+*   delete:
+*     tags:  
+*     - "Locale"  
+*     - "Gestore"  
+*     summary: Permette l'eliminazione di un servizio.
+*     parameters:
+*     - in: "query" 
+*       name: "idS"
+*       description: "Indica l'id del servizio che vogliamo eliminare"
+*       required: true
+*     - in: "query" 
+*       name: "idT"
+*       description: "Indica l'id della tipologia associata al servizio"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Servizio eliminato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.delete("/eliminaServizio", (req, res) => {
-    // console.log(req.session);
-    console.log("DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE");
-    console.log("ID DA ELIMINARE " + req.query.idS);
-    console.log("ID TIPOLOGIA " + req.query.idT);
     connection.query(
         `DELETE FROM servizi WHERE id_servizi = "${req.query.idS}"`,
         (err, tipologia) => {
@@ -525,14 +814,38 @@ app.delete("/eliminaServizio", (req, res) => {
                 (err, servizi) => {
                     if (err) throw err;
 
-                    console.log("Data received from Db:");
-                    console.log(servizi);
+                    // console.log("Data received from Db:");
+                    // console.log(servizi);
                     res.render("pages/servizi", { servizi });
                 }
             );
         }
     );
 });
+
+/**
+* @swagger 
+* 
+* /eliminaLocale:
+*   delete:
+*     tags:  
+*     - "Gestore"  
+*     summary: Permette al gestore di eliminare un locale.
+*     parameters:
+*     - in: "query" 
+*       name: "id"
+*       description: "Indica l'id del locale che vogliamo eliminare"
+*       required: true
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id del gestore"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Locale eliminato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
 
 app.delete("/eliminaLocale", (req, res) => {
     console.log(req.session);
@@ -556,6 +869,45 @@ app.delete("/eliminaLocale", (req, res) => {
 });
 
 
+/**
+* @swagger 
+* 
+* /modificaLocale/aggiorna:
+*   post:
+*     tags:  
+*     - "Gestore"  
+*     summary: Permette l'update dei dati modificati di un locale.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - nome
+*           - email
+*           - numero_telefono
+*           - id_locale
+*         properties:
+*           nome:
+*             type: string
+*           email:
+*             type: string
+*           numero_telefono:
+*             type: string
+*           id_locale:
+*             type: string
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id del gestore"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Locale aggiornato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.post("/modificaLocale/aggiorna", urlencodedParser, (req, res) => {
     console.log("Aggiorna informazione locale");
     console.log(req.body);
@@ -577,6 +929,39 @@ app.post("/modificaLocale/aggiorna", urlencodedParser, (req, res) => {
         }
     );
 });
+
+/**
+* @swagger 
+* 
+* /modificaServizio/aggiorna:
+*   post:
+*     tags:  
+*     - "Locale"  
+*     - "Gestore"  
+*     summary: Permette l'update dei dati modificati di un servizio.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - tipoServizio
+*           - prezzoServizio
+*           - id_servizi
+*         properties:
+*           tipoServizio:
+*             type: string
+*           prezzoServizio:
+*             type: integer
+*           id_servizi:
+*             type: integer
+*     responses: 
+*         "200":
+*           description: "Servizio aggiornato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
 
 app.post("/modificaServizio/aggiorna", urlencodedParser, (req, res) => {
     console.log("Aggiorna informazione servizio");
@@ -610,7 +995,44 @@ app.post("/modificaServizio/aggiorna", urlencodedParser, (req, res) => {
     );
 });
 
+/**
+* @swagger 
+* 
+* /aggiungiServizio:
+*   post:
+*     tags:  
+*     - "Locale"  
+*     - "Gestore"  
+*     summary: Permette l'aggiunta di un servizio.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - tipoServizio
+*           - prezzoServizio
+*           - id_tipologia
+*         properties:
+*           tipoServizio:
+*             description: Indica il tipo di servizio
+*             type: string
+*           prezzoServizio:
+*             description: Indica il prezzo del servizio
+*             type: integer
+*           id_tipologia:
+*             description: Indica l'id della tipologia associata al servizio
+*             type: integer
+*     responses: 
+*         "200":
+*           description: "Servizio aggiunto correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.post("/aggiungiServizio", urlencodedParser, (req, res) => {
+  console.log(req.body)
   var newServizio = {
       id_tipologia: req.body["id_tipologia"],
       tipo_servizio: req.body["tipoServizio"],
@@ -634,9 +1056,59 @@ app.post("/aggiungiServizio", urlencodedParser, (req, res) => {
   });
 });
 
+/**
+* @swagger 
+* 
+* /modificaTipologia/aggiorna:
+*   post:
+*     tags:  
+*     - "Locale"  
+*     - "Gestore"  
+*     summary: Permette l'update dei dati modificati di un servizio.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - nome
+*           - quantita
+*           - costo
+*           - nMaxPersone
+*           - zona_aperta
+*           - id_tipologia
+*           - id_locale
+*         properties:
+*           nome:
+*             description: Indica il nome della tipologia
+*             type: string
+*           quantita:
+*             description: Indica la quantità
+*             type: integer
+*           costo:
+*             description: Indica il costo
+*             type: integer
+*           nMaxPersone:
+*             description: Indica il numero massimo di persone
+*             type: integer
+*           zona_aperta:
+*             description: Indica se è una zona aperta
+*             type: integer
+*           id_tipologia:
+*             description: Indica l'id della tipologia che vogliamo aggiornare
+*             type: integer
+*           id_locale:
+*             description: Indica l'id del locale associato alla tipologia
+*             type: integer
+*     responses: 
+*         "200":
+*           description: "Tipologia aggiornato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.post("/modificaTipologia/aggiorna", urlencodedParser, (req, res) => {
-    console.log("Aggiorna informazione tipologia");
-    console.log(req.body);
     connection.query(
         `UPDATE tipologia SET nome_tipologia = "${req.body["nome"]}", quantita = "${req.body["quantita"]}",
         costo = "${req.body["costo"]}", numero_massimo_persone = "${req.body["nMaxPersone"]}",
@@ -659,9 +1131,56 @@ app.post("/modificaTipologia/aggiorna", urlencodedParser, (req, res) => {
     );
 });
 
+/**
+* @swagger 
+* 
+* /gestioneAccount/aggiorna:
+*   post:
+*     tags:  
+*     - "Cliente"  
+*     - "Gestore"  
+*     summary: Permette l'update dei dati del proprio account.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - nome
+*           - cognome
+*           - data_di_nascita
+*           - email
+*           - numero_telefono
+*         properties:
+*           nome:
+*             description: Indica il nome dell'utente
+*             type: string
+*           cognome:
+*             description: Indica il cognome
+*             type: string
+*           data_di_nascita:
+*             description: Indica la data di nascita
+*             type: string
+*             pattern: '^\y{4}-\m{2}-\d{2}$'
+*           email:
+*             description: Indica l'indirizzo email
+*             type: string
+*           numero_telefono:
+*             description: Indica il numero di telefono
+*             type: string
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id dell'utente di cui vogliamo modificare le informazioni"
+*       required: true
+*     responses: 
+*         "200":
+*           description: "Account aggiornato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.post("/gestioneAccount/aggiorna", urlencodedParser, (req, res) => {
-    console.log("Aggiorna informazione account");
-    console.log(req.body);
     connection.query(
         `UPDATE utente SET nome = "${req.body["nome"]}", cognome = "${req.body["cognome"]}", data_di_nascita = "${req.body["dataNascita"]}", email = "${req.body["email"]}",  numero_telefono = "${req.body["telefono"]}" WHERE id_utente = "${req.session.id_utente}"`,
         (err, res) => {
@@ -670,6 +1189,45 @@ app.post("/gestioneAccount/aggiorna", urlencodedParser, (req, res) => {
         }
     );
 });
+
+/**
+* @swagger 
+* 
+* /gestioneAccountLocale/aggiorna:
+*   post:
+*     tags:  
+*     - "Locale"  
+*     summary: Permette l'update dei dati del proprio account.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - nome_locale
+*           - email
+*           - numero_telefono
+*         properties:
+*           nome_locale:
+*             description: Indica il nome del locale
+*             type: string
+*           email:
+*             description: Indica l'indirizzo email
+*             type: string
+*           numero_telefono:
+*             description: Indica il numero di telefono
+*             type: string
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id del locale di cui vogliamo modificare le informazioni"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Informazioni Account aggiornato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
 
 app.post("/gestioneAccountLocale/aggiorna", urlencodedParser, (req, res) => {
     console.log("Aggiorna informazione account");
@@ -682,6 +1240,57 @@ app.post("/gestioneAccountLocale/aggiorna", urlencodedParser, (req, res) => {
         }
     );
 });
+
+/**
+* @swagger 
+* 
+* /api/registrazioneLocale:
+*   post:
+*     tags:  
+*     - "Cliente"  
+*     summary: Permette la registrazione di un locale da parte dell'utente.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - nome_locale
+*           - email
+*           - password
+*           - numero_telefono
+*           - citta
+*           - indirizzo
+*         properties:
+*           nome_locale:
+*             description: Indica il nome del locale
+*             type: string
+*           email:
+*             description: Indica l'indirizzo email
+*             type: string
+*           password:
+*             description: Indica la password del locale
+*             type: string
+*           numero_telefono:
+*             description: Indica il numero di telefono
+*             type: string
+*           citta:
+*             description: Indica la città dove è situato il locale
+*             type: string
+*           indirizzo:
+*             description: Indica l'indirizzo del locale
+*             type: string
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id dell'utente gestore che vuole registrare il locale"
+*       required: true
+*       responses: 
+*         "200":
+*           description: "Locale registrato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
 
 app.post("/api/registrazioneLocale", urlencodedParser, (req, res) => {
     // SE SI TROVA UN MODO PER NON METTERE TUTTO DENTRO UN ORRIBILE FUNZIONE TANTO MEGLIO MA ATM NON SAPREI COME FARLO
@@ -719,10 +1328,56 @@ app.post("/api/registrazioneLocale", urlencodedParser, (req, res) => {
     res.redirect("/home")
 });
 
-app.post("/api/registrazioneUtente", urlencodedParser, (req, res) => {
-    // SE SI TROVA UN MODO PER NON METTERE TUTTO DENTRO UN ORRIBILE FUNZIONE TANTO MEGLIO MA ATM NON SAPREI COME FARLO
-    console.log(req.session);
+/**
+* @swagger 
+* 
+* /api/registrazioneUtente:
+*   post:
+*     tags:  
+*     - "Non registrato"  
+*     summary: Permette all'utente di registrarsi alla piattaforma.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - nome
+*           - cognome
+*           - data_di_nascita
+*           - email
+*           - telefono
+*           - password
+*         properties:
+*           nome:
+*             description: Indica il nome dell'utente
+*             type: string
+*           cognome:
+*             description: Indica il cognome dell'utente
+*             type: string
+*           dataNascita:
+*             description: Indica la data di nascita
+*             type: string
+*             format: date
+*           email:
+*             description: Indica l'indirizzo email
+*             type: string
+*           telefono:
+*             description: Indica il numero di telefono
+*             type: string
+*           password:
+*             description: Indica la password del locale
+*             type: string
+*     responses: 
+*         "200":
+*           description: "Utente registrato correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
 
+app.post("/api/registrazioneUtente", urlencodedParser, (req, res) => {
+    console.log(req.body)
     let newUser = {
         nome: req.body["nome"],
         cognome: req.body["cognome"],
@@ -731,15 +1386,44 @@ app.post("/api/registrazioneUtente", urlencodedParser, (req, res) => {
         numero_telefono: req.body["telefono"],
         password: req.body["password"],
     };
-    connection.query("INSERT INTO utente SET ?", newUser, (err, res) => {
+    connection.query("INSERT INTO utente SET ?", newUser, (err, risposta) => {
         if (err) throw err;
-
-        console.log("Last insert ID:", res.insertId);
+        res.render("pages/login");
     });
 });
 
+/**
+* @swagger 
+* 
+* /api/utenti/login:
+*   post:
+*     tags:  
+*     - "Non registrato"  
+*     summary: Permette all'utente di effettuare l'accesso.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - email
+*           - password
+*         properties:
+*           email:
+*             description: Indica l'indirizzo email dell'utente
+*             type: string
+*           password:
+*             description: Indica la password
+*             type: string
+*     responses: 
+*         "200":
+*           description: "Accesso eseguito correttamente correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.post("/api/utenti/login", urlencodedParser, (req, res) => {
-    console.log("Got body:", req.body);
     connection.query(
         `SELECT * FROM utente WHERE email = "${req.body["email"]}" AND password = "${req.body["password"]}"`,
         (err, rows) => {
@@ -791,10 +1475,62 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
     );
 });
 
+/**
+* @swagger 
+* 
+* /aggiungiTipologia:
+*   post:
+*     tags:  
+*     - "Locale"  
+*     - "Gestore"  
+*     summary: Permette l'aggiunta di una tipologia.
+*     parameters:
+*     - in: "body"
+*       name: "body"
+*       required: true
+*       schema:
+*         type: object
+*         required:
+*           - nome_tipologia
+*           - quantita
+*           - costo
+*           - nMaxPersone
+*           - zona_aperta
+*         properties:
+*           nome_tipologia:
+*             description: Indica il nome della tipologia
+*             type: string
+*           quantita:
+*             description: Indica la quantita
+*             type: integer
+*           costo:
+*             description: Indica il costo
+*             type: integer
+*           nMaxPersone:
+*             description: Indica il numero massimo di persone
+*             type: integer
+*           zona_aperta:
+*             description: Indica la presenza o meno di una zona aperta
+*             type: integer
+*           id_locale:
+*             description: Indica l'id del locale associato alla tipologia
+*             type: integer
+*     - in: "session" 
+*       name: "id_utente"
+*       description: "Indica l'id dell'utente"
+*     - in: "session" 
+*       name: "isTipoGestore"
+*       description: "Indica se l'utente è di tipo gestore o no"
+*       required: true
+*       
+*     responses: 
+*         "200":
+*           description: "Servizio aggiunto correttamente"
+*         "400":
+*           description: "Errore nell'esecuzione dell'API" 
+*/
+
 app.post("/aggiungiTipologia", urlencodedParser, (req, res) => {
-    // SE SI TROVA UN MODO PER NON METTERE TUTTO DENTRO UN ORRIBILE FUNZIONE TANTO MEGLIO MA ATM NON SAPREI COME FARLO
-    console.log(req.session);
-    console.log(req.body);
     if(req.session.isLocale == 1){
       var newLocale = {
           id_locale: req.session["id_utente"],
@@ -855,19 +1591,6 @@ app.post("/aggiungiTipologia", urlencodedParser, (req, res) => {
     }
 });
 
-app.get("/api/utenti", (req, res) => {
-    connection.query(
-        `SELECT * FROM utente WHERE id_utente = "${req.session.id_utente}"`,
-        (err, rows) => {
-            if (err) throw err;
-
-            console.log("Data received from Db:");
-            console.log(rows);
-        }
-    );
-});
-
-
 /**
 * @swagger
 * 
@@ -885,11 +1608,11 @@ app.get("/api/utenti", (req, res) => {
 *       name: "id_utente"
 *       description: "Indica l'id dell'utente connesso"
 *       required: true
-*       responses: 
+*     responses: 
 *         "200":
 *           description: "Prenotazioni visualizzate correttamente"
 *
- */
+*/
 
 
 //-------------------------------------------------------------------------------------------- UTENTE LOCALE
@@ -903,11 +1626,14 @@ app.get('/prenotazioni', async function(req, res) {
         connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
             if (err) { console.log(res.status(400)); throw err;}
             else {
-                
-                prenotazioni.forEach(element =>{
-                    element.data_prenotazione=formatDate(element.data_prenotazione);
-                });
-
+                //errore con accesso a cella dell'array non esistente
+                /* var i=0;  
+                while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
+                    console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
+                    prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
+                    
+                    i++;
+                    }*/
 
                //console.log(res.status(200));    
                 console.log("Data received from Db:");
@@ -922,23 +1648,23 @@ app.get('/prenotazioni', async function(req, res) {
 * @swagger
 * 
 * 
-* /prenotazioni/prenotazione_spec/:id_prenotazione:
+* /prenotazioni/prenotazione_spec/{id_prenotazione}:
 *   get:
 *     tags:  
 *     - "Locale"  
 *     summary: Permette all'utente di tipo Locale di visualizzare le informazioni di una determinata prenotazione di un cliente.
 *     parameters:
-*     - in: "params" 
-*       name: "id_Prenotazione"
+*     - in: "path" 
+*       name: "id_prenotazione"
 *       description: "Indica l'id della prenotazione che si vuole visualizzare"
 *       required: true
-*       responses: 
+*     responses: 
 *         "200":
 *           description: "Prenotazione visualizzata correttamente"
 *         "400":
 *           description: "Errore nell'esecuzione dell'API" 
 *
- */
+*/
 
 //visualizzazione prenotazioni specifiche
 app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req, res) { 
@@ -952,11 +1678,11 @@ app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req,
             prenotazione[0]["data_prenotazione"] = formatDate(prenotazione[0]["data_prenotazione"] );
             
             
-            console.log("Data received from Db:");
-            console.log(prenotazione);
+            // console.log("Data received from Db:");
+            // console.log(prenotazione);
             res.render("pages/elencoPrenotazioneSpec", { prenotazione });
             prenotazione = JSON.stringify(prenotazione);
-            console.log(prenotazione);
+            // console.log(prenotazione);
            //res.send(prenotazione);
             
         }
@@ -973,10 +1699,10 @@ app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req,
 *     summary: Permette all'utente di tipo Locale di eliminare una determinata prenotazione di un cliente.
 *     parameters:
 *     - in: "query" 
-*       name: "id_Prenotazione"
+*       name: "idP"
 *       description: "Indica l'id della prenotazione che si vuole annullare"
 *       required: true
-*       responses: 
+*     responses: 
 *         "200":
 *           description: "Prenotazione annullata correttamente"
 *         "400":
@@ -985,26 +1711,25 @@ app.get('/prenotazioni/prenotazione_spec/:id_prenotazione', async function (req,
 //risolvere problema data
 app.delete('/prenotazioni/prenotazione_spec/annulla/', (req, res) => {
     var id_prenotazione = req.query.idP;
-     console.log("appdelete "+id_prenotazione);
- 
+
     connection.query(`DELETE FROM prenotazione_tipologia_locale WHERE id_prenotazione = ?`,[id_prenotazione], (err,prenotazione)=> {
-     if (err) { console.log(res.status(400)); throw err;}
-         else {
-             
+    if (err) {throw err;}
+        else {     
             alert("Prenotazione annullata"); //tornare all'elenco locali
-            console.log(res.status(200));
 
             connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${req.session.id_utente}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
-                if (err) { console.log(res.status(400)); throw err;}
+                if (err) { throw err;}
                 else {
                     
-                    prenotazioni.forEach(element =>{
-                        element.data_prenotazione=formatDate(element.data_prenotazione);
-                    });
+                    //errore con accesso a cella dell'array non esistente
+                    /* var i=0;  
+                    while(!(prenotazioni[i]["data_prenotazione"] === undefined)) {
+                        console.log(formatDate(prenotazioni[i]["data_prenotazione"]));
+                        prenotazioni[i]["data_prenotazione"] = formatDate(prenotazioni[i]["data_prenotazione"] );
+                        
+                        i++;
+                        }*/
     
-                    res.status(200);    
-                    console.log("Data received from Db:");
-                    console.log(prenotazioni);
                     res.render("pages/elencoPrenotazioniLocale", { prenotazioni });
                 }
             });

@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <%- include('../partials/head'); %>
-</head>
-
-<body class="container">
+<body class="center">
   <header>
-        <%- include('../partials/header'); %>
+    <h1 class="h1">AGGIUNGI SERVIZIO</h1>
+        <%- include('../partials/head'); %>
     </header>
     <div class="container">
-        <h1>Aggiungi Servizio</h1>
-        <form action="/aggiungiServizio" method="POST">
-            <input type="hidden" class="form-control" id="id_tipologia" name="id_tipologia" value="<%=id_tipologia %>">
-            <div class="form-group">
-                <label for="tipoServizio">Tipo servizio</label>
-                <select name="tipoServizio" id="tipoServizio">
+        
+        <form action="/aggiungiServizio" method="POST"><br>
+            <input type="hidden" class="b" id="id_tipologia" name="id_tipologia" value="<%=id_tipologia %>">
+            <div >
+                <label for="tipoServizio">Tipo servizio</label><br>
+                <select class="b" style="width: 40%;" name="tipoServizio" id="tipoServizio">
                   <option value="DJ">DJ</option>
                   <option value="Catering">Catering</option>
                   <option value="Impianto audio">Impianto audio</option>
                 </select>
                 <!-- <input type="text" class="form-control" id="tipoServizio" placeholder="Inserisci il tipo di servizio" name="tipoServizio"> -->
-            </div>
+            </div><br>
             <div class="form-group">
-                <label for="prezzoServizio">Prezzo servizio</label>
-                <input type="text" class="form-control" id="prezzoServizio" 
+                <label for="prezzoServizio">Prezzo servizio</label><br>
+                <input type="text" class="b"  style="width: 40%;" id="prezzoServizio" 
                     placeholder="Inserisci il prezzo del servizio" name="prezzoServizio">
-            </div>
-            <button type="submit" class="btn btn-primary">Aggiungi</button>
+            </div><br>
+            <button type="submit" class="bottone">AGGIUNGI</button>
         </form>
 </body>
 

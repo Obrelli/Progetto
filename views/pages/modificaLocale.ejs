@@ -2,42 +2,73 @@
 <html lang="en">
 
 <head>
-    <%- include('../partials/head'); %>
+   
 </head>
 
 <body class="container">
-  <header>
-        <%- include('../partials/header'); %>
-    </header>
 
     <main>
         <div class="container">
-        <h1>Informazioni</h1>
-        <form action="/modificaLocale/aggiorna" method="POST">
-            <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=locale[0].id_locale %>">
-            <div class="form-group">
-                <label for="firstName">Nome</label>
-                <input type="text" class="form-control" id="firstName" 
-                    name="nome" value="<%=locale[0].nome_locale %>">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="text" class="form-control" id="email" 
-                    name="email" value="<%=locale[0].email %>">
-            </div>
-            <div class="form-group">
-                <label for="numero_telefono">Numero di telefono</label>
-                <input type="text" class="form-control" id="numero_telefono" 
-                    name="numero_telefono" value="<%=locale[0].numero_telefono %>">
-            </div>
-            <button type="submit" class="btn btn-primary">Modifica</button>
+        <h1 class="h1">INFORMAZIONI</h1>
+
+        <%- include('../partials/head'); %>
+
+        <form class="padding" action="/modificaLocale/aggiorna" method="POST">
+            <table style="width: 100%;" class="center">
+                <tr>
+                    <td>
+                        <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=locale[0].id_locale %>">
+                        <div class="form-group">
+                            <label for="firstName">Nome</label><br>
+                            <input type="text" class="b" style="width:40%" id="firstName" 
+                                name="nome" value="<%=locale[0].nome_locale %>">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="email">Email</label><br>
+                            <input type="text" class="b" style="width:40%"  id="email" 
+                                name="email" value="<%=locale[0].email %>">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="numero_telefono">Numero di telefono</label><br>
+                            <input type="text" class="b" style="width:40%"  id="numero_telefono" 
+                                name="numero_telefono" value="<%=locale[0].numero_telefono %>">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><br>
+            <button type="submit" class="bottone">Modifica</button>
+                        
+                    </td>
+                </tr>
+            </table>           
+            
         </form>
         <br>
-        <button onclick="eliminaLocale('<%= locale[0].id_locale %>')" class="btn btn-primary">Elimina</button>
-        <br><br>
-        <button onclick="aggiungiTipologia('<%= locale[0].id_locale %>')" class="btn btn-primary">Aggiungi Tipologia</button>
-        <br><br>  
-        <button onclick="elencoTipologie('<%= locale[0].id_locale %>')" class="btn btn-primary">Elenco tipologie</button>
+        <table style="width: 100%;" class="center">
+            <tr>
+                <td>
+                    <button style="min-width: 200px; min-height: 100px;" type="submit" onclick="eliminaLocale('<%= locale[0].id_locale %>')" class="bottone">Elimina</button>
+
+                </td>
+                <td>
+                    <button style="min-width: 200px; min-height: 100px;" type="submit"  onclick="aggiungiTipologia('<%= locale[0].id_locale %>')" class="bottone">Aggiungi Tipologia</button>
+
+                </td>
+                <td>
+                    <button style="min-width: 200px; min-height: 100px;" onclick="elencoTipologie('<%= locale[0].id_locale %>')" class="bottone">Elenco tipologie</button>
+
+                </td>
+            </tr>
+        </table> 
     </main>
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>

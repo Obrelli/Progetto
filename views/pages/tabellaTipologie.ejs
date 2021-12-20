@@ -1,5 +1,6 @@
-<table class="table table-striped table-dark">
-    <thead class="thead-dark">
+<%- include('style')%>
+<table class="center" style="width:80%; padding-top: 3%;">
+    <thead Style="color: purple;">
         <tr>
             <th>Nome</th>
             <th>Quantità</th>
@@ -8,11 +9,11 @@
             <th>Zona aperta</th>
           </tr>
     </thead>
-    <tbody>
+    <tbody >
         <% tipologie.forEach(tipologia=> { %>
             <tr onclick="idTipologia('<%= tipologia.id_tipologia %>')">
             <!-- <tr action="/modificaTipologia?id='<%= tipologia.id_tipologia %>'" value="<%= tipologia.id_tipologia %>"> -->
-                <td>
+                <td style="padding-top: 3%;">
                     <%= tipologia.nome_tipologia %>
                 </td>
                 <td>

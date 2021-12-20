@@ -2,31 +2,71 @@
 
 <% prenotazione.forEach(prenotazione=> { %>
 <!-- mettere a posto css-->
-<div class="container" style="text-align: center;">
-    <div>
-       
+
+
+       <table class="center" style="width: 80%;">
+           <tr>
+               <td>
+                <div style="color: purple;"><h3><%= prenotazione.nome_tipologia %></h3></div>
+               </td>
+           </tr>
+           <tr>
+            <td>
+                <h4>Numero di Conferma: </h4><br><div class="b center" style="width:40%"><%= prenotazione.id_prenotazione%></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Data di prenotazione: </h4><br> <div class="center b" style="width:40%"><%= prenotazione.data_prenotazione%></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Quantità:</h4> <div class="center b" style="width:40%"><%= prenotazione.quantita%></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Numero di persone</h4> <div class="center b" style="width:40%"><%= prenotazione.numero_massimo_persone%></div>
+            </td>
+        </tr>
+    </table><br>
+    <table class="center" style="width: 80%;">
+        <tr>
+            <td>
+                <h3 style="color: purple;">Informazioni cliente</h3>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b><%= prenotazione.nome%>  </b>  <b><%= prenotazione.cognome%></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Recapito telefonico:    </h4> <b><%= prenotazione.numero_telefono%></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Contatto email:         </h4> <b><%= prenotazione.email%></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h4>Valutazione:            </h4> <b> XXX </b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div >
+                    <button class="bottone" onclick="eliminaPrenotazione('<%= prenotazione.id_prenotazione %>')"> Annulla Prenotazione </button>
+                </div>
+            </td>
+        </tr>
+       </table>
         
-        <!--<h3>Tipologia prenotata</h3>-->
-        <b><%= prenotazione.nome_tipologia %>
-
-        <h5>Numero di Conferma: </h5> <b><%= prenotazione.id_prenotazione%></b>
-
-        <h4>Data di prenotazione: </h4> <b><%= prenotazione.data_prenotazione%></b>
-
-        <h4>Quantità:</h4> <b><%= prenotazione.quantita%></b>
-        <h4>Numero di persone</h4> <b><%= prenotazione.numero_massimo_persone%></b>
-
-        <h3>Informazioni cliente</h3>
-        <b><%= prenotazione.nome%>  </b>  <b><%= prenotazione.cognome%></b>
-        <h4>Recapito telefonico:    </h4> <b><%= prenotazione.numero_telefono%></b>
-        <h4>Contatto email:         </h4> <b><%= prenotazione.email%></b>
-        <h4>Valutazione:            </h4> <b> XXX </b>
-    </div>
-
-    <div >
-        <button onclick="eliminaPrenotazione('<%= prenotazione.id_prenotazione %>')"> Annulla Prenotazione </button>
-    </div>
-    
+      
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
     <script>
@@ -43,5 +83,5 @@
         })
        }
     </script>
-</div> 
+
 <% }) %>

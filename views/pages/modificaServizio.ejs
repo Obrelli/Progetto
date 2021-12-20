@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <%- include('../partials/head'); %>
-</head>
-
 <body class="container">
+  
+  <h1 class="h1">INFORMAZIONI</h1>
   <header>
-        <%- include('../partials/header'); %>
+        <%- include('../partials/head'); %>
     </header>
-
+<br>
     <main>
         <div class="container">
-        <h1>Informazioni</h1>
         <form action="/modificaServizio/aggiorna" method="POST">
             <input type="hidden" class="form-control" id="id_servizi" name="id_servizi" value="<%=servizio[0].id_servizi %>">
             <div class="form-group">
-                <label for="tipoServizio">Tipo servizio</label>
-                  <select name="tipoServizio" id="tipoServizio">
+                <label for="tipoServizio">Tipo servizio</label><br>
+                  <select class="b" style="width: 40%;" name="tipoServizio" id="tipoServizio">
                   <option value="DJ" selected>DJ</option>
                   <option value="Catering">Catering</option>
                   <option value="Impianto audio">Impianto audio</option>
                 </select>
-            </div>
+            </div><br>
             <div class="form-group">
-                <label for="prezzoServizio">Prezzo Servizio</label>
-                <input type="text" class="form-control" id="prezzoServizio" 
+                <label for="prezzoServizio">Prezzo Servizio</label><br>
+                <input type="text" class="b" style="width: 40%;" id="prezzoServizio" 
                     placeholder="Inserisci il prezzo del servizio" name="prezzoServizio" value="<%=servizio[0].prezzo_servizio %>">
             </div>
-            <button type="submit" class="btn btn-primary">Modifica</button>
+            <table style="width:40%" class="center">
+              <br>
+              <tr>
+                <td>
+                  <button style="width: 200px; padding:10%;" type="submit" class="bottone">MODIFICA</button>
+                </td>
+                <td>
+                  <!--<button onclick="eliminaServizio('<%= servizio[0].id_servizi %>', '<%= servizio[0].id_tipologia %>')" class="btn btn-primary">Elimina</button>-->
+                  <a onclick="eliminaServizio('<%= servizio[0].id_servizi %>', '<%= servizio[0].id_tipologia %>')">
+                    <p style="width: 140px; padding:15%; font-family: Arial, Helvetica, sans-serif;" class="bottone">
+                      ELIMINA
+                    </p>
+                  </a>
+                </td>
+              </tr>
+            </table>
+            
         </form>
         <br>
-        <button onclick="eliminaServizio('<%= servizio[0].id_servizi %>', '<%= servizio[0].id_tipologia %>')" class="btn btn-primary">Elimina</button>
     </main>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>

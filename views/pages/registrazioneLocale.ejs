@@ -2,48 +2,130 @@
 <html lang="en">
 
 <head>
-    <%- include('../partials/head'); %>
+    <%- include('style'); %>
 </head>
 
-<body class="container">
-  <header>
-        <%- include('../partials/header'); %>
-    </header>
+<body class="center">
+    <h1 class="h1">Registrazione Locale</h1>
+    <!--Link home-->
+    <div style="text-align: center;">
+        <table style="margin: 0 auto; font-size: 80%;">
+          <tr>
+            <td style="min-width: 160px;">
+              <b><a href="/home" style="color:purple;text-decoration: none;">Homepage</a></b>
+            </td>
+            <td style="min-width: 120px;">
+              <a href="/profiloUtente" style="color:purple;text-decoration: none;"><b>Profilo</b></a>
+            </td>
+            <td style="min-width: 290px;">
+              <a href="/elencopre" style="color:purple;text-decoration: none;"><b>Prenotazioni effettuate</b></a>
+            </td>
+            <% if(isGestore == 1){%>
+              <td style="min-width: 150px;">
+                <a href="/locali" style="color:purple;text-decoration: none;"><b>Gestione locali</b></a>
+              </td>
+            <% } %>
+          </tr>
+        </table>
+      </div>
+    <!---->
+
     <div class="container">
-        <h1>Registrazione Locale</h1>
+        
         <form action="/api/registrazioneLocale" method="POST">
-            <div class="form-group">
-                <label for="firstName">Nome</label>
-                <input type="text" class="form-control" id="firstName" 
-                    placeholder="Inserisci il Nome" name="nome" required>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputEmail1">Email</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" 
-                    name="email" placeholder="Inserisci Indirizzo Email" required>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword" 
-                    name="password" placeholder="Inserisci Password" required>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputNumeroTelefono">Numero di telefono</label>
-                <input type="text" class="form-control" id="exampleInputNumeroTelefono" 
-                    name="telefono" placeholder="Inserisci Numero di telefono" required>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputCitta">Città</label>
-                <input type="text" class="form-control" id="exampleInputCitta" 
-                    name="citta" placeholder="Inserisci città" required>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputIndirizzo">Indirizzo</label>
-                <input type="text" class="form-control" id="exampleInputIndirizzo" 
-                    name="indirizzo" placeholder="Inserisci Indirizzo" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Registra</button>
-        </form>
+            <table class="center" style="font-size: 70%; width: 100%;">
+                <tr class="padding">
+                    <td>
+                        <br>
+                        <label for="firstName">Nome</label>
+                    </td>
+                </tr>
+                <tr >
+                    <td>
+                        <div>
+                            <input type="text" class="b"  style="width: 40%;"id="firstName" 
+                                placeholder="Inserisci il Nome" name="nome" required>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <label for="exampleInputEmail1">Email</label>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <div class="form-group">
+                            
+                            <input type="email" class="b" style="width: 40%;" id="exampleInputEmail1" 
+                                name="email" placeholder="Inserisci Indirizzo Email" required>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <label for="exampleInputPassword">Password</label>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <div class="form-group">
+                            
+                            <input type="password" class="b" style="width: 40%;" id="exampleInputPassword" 
+                                name="password" placeholder="Inserisci Password" required>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <label for="exampleInputNumeroTelefono">Numero di telefono</label>
+                        
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <div class="form-group">
+                            <input type="text" class="b" style="width: 40%;" id="exampleInputNumeroTelefono" 
+                                name="telefono" placeholder="Inserisci Numero di telefono" required>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <label for="exampleInputCitta">Città</label>
+                        
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <div class="form-group">
+                            <input type="text" class="b" style="width: 40%;" id="exampleInputCitta" 
+                                name="citta" placeholder="Inserisci città" required>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <label for="exampleInputIndirizzo">Indirizzo</label>
+                        
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <div class="form-group">
+                            <input type="text" class="b" style="width: 40%;" id="exampleInputIndirizzo" 
+                                name="indirizzo" placeholder="Inserisci Indirizzo" required>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="padding">
+                    <td>
+                        <br>
+                        <button type="submit" class="bottone">Registra</button>
+                    </td>
+                </tr>
+            </table>
+   </form>
   <script src="scriptForm.js"></script>
 </body>
 

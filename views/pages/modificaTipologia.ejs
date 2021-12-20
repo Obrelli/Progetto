@@ -1,67 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <%- include('../partials/head'); %>
-</head>
 
-<body class="container">
+<body class="center">
+    <h1 class="h1">INFORMAZIONI</h1>
   <header>
-        <%- include('../partials/header'); %>
+        <%- include('../partials/head'); %>
     </header>
 
     <main>
         <div class="container">
-        <h1>Informazioni</h1>
+        
         <form action="/modificaTipologia/aggiorna" method="POST">
             <input type="hidden" class="form-control" id="id_tipologia" name="id_tipologia" value="<%=tipologia[0].id_tipologia %>">
             <input type="hidden" class="form-control" id="id_locale" name="id_locale" value="<%=tipologia[0].id_locale %>">
-            <div class="form-group">
-                <label for="firstName">Nome</label>
-                <input type="text" class="form-control" id="firstName" 
-                    placeholder="Inserisci il Nome" name="nome" value="<%=tipologia[0].nome_tipologia %>">
-            </div>
-            <div class="form-group">
-                <label for="quantita">Quantità</label>
-                <input type="text" class="form-control" id="quantita" 
-                    placeholder="Inserisci la quantità" name="quantita" value="<%=tipologia[0].quantita %>">
-            </div>
-            <div class="form-group">
-                <label for="costo">Costo</label>
-                <input type="text" class="form-control" id="costo" 
-                    name="costo" placeholder="Inserisci il costo" value="<%=tipologia[0].costo %>">
-            </div>
-            <div class="form-group">
-                <label for="nMaxPersone">Numero massimo di persone</label>
-                <input type="text" class="form-control" id="nMaxPersone" 
-                    name="nMaxPersone" placeholder="Inserisci il numero massimo di persone" value="<%=tipologia[0].numero_massimo_persone %>">
-            </div>
-            <div class="form-group">
-                <label for="zonaAperta">Zona aperta</label>
-                <br>
-                <% if(tipologia[0].zona_aperta == 1){%>
-                  <input type="radio" id="vero" name="zona_aperta" value="1" checked>
-                  <label for="vero">Sì</label>
-                  <br>
-                  <input type="radio" id="falso" name="zona_aperta" value="0">
-                  <label for="falso">No</label>
-                <%}%>
-                <% if(tipologia[0].zona_aperta == 0){%>
-                  <input type="radio" id="vero" name="zona_aperta" value="1">
-                  <label for="vero">Sì</label>
-                  <br>
-                  <input type="radio" id="falso" name="zona_aperta" value="0" checked>
-                  <label for="falso">No</label>
-                <%}%>
-            </div>
-            <button type="submit" class="btn btn-primary">Modifica</button>
+            <table style="width: 100%;" class="center">
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="firstName">Nome</label><br>
+                    <input type="text" class="b" style="width: 40%;" id="firstName" 
+                        value="<%= tipologia[0].nome_tipologia%>" name="nome">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="quantita">Quantità</label><br>
+                        <input type="text" class="b" style="width: 40%;" id="quantita" 
+                        value="<%= tipologia[0].quantita%>" name="quantita">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="costo">Costo</label><br>
+                    <input type="text" class="b" style="width: 40%;" id="costo" 
+                        name="costo" value="<%= tipologia[0].costo%>">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <label for="nMaxPersone">Numero massimo di persone</label><br>
+                    <input type="text" class="b" style="width: 40%;" id="nMaxPersone" 
+                        name="nMaxPersone" value="<%= tipologia[0].numero_massimo_persone%>">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 1.4%;">
+                        <div class="form-group">
+                            <label for="zonaAperta">Zona aperta</label>
+                            <br>
+                            <% if(tipologia[0].zona_aperta == 1){%>
+                              <input type="radio" id="vero" name="zona_aperta" value="1" checked>
+                              <label for="vero">Sì</label>
+                              <br>
+                              <input type="radio" id="falso" name="zona_aperta" value="0">
+                              <label for="falso">No</label>
+                            <%}%>
+                            <% if(tipologia[0].zona_aperta == 0){%>
+                              <input type="radio" id="vero" name="zona_aperta" value="1">
+                              <label for="vero">Sì</label>
+                              <br>
+                              <input type="radio" id="falso" name="zona_aperta" value="0" checked>
+                              <label for="falso">No</label>
+                            <%}%>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                <button type="submit" class="bottone">MODIFICA</button>                
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br>
+                        <table class="center" style="width: 80%;">
+                            <tr>
+                                <td>
+                                <!--<button onclick="eliminaTipologia('<%= tipologia[0].id_tipologia %>', '<%= tipologia[0].id_locale %>')" class="bottone">Elimina</button>-->
+                                    <a  onclick="eliminaTipologia('<%= tipologia[0].id_tipologia %>', '<%= tipologia[0].id_locale %>')">
+                                        <p style="width: 200px; padding:10%" class="bottone">ELIMINA TIPOLOGIA</p>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a  onclick="aggiungiServizi('<%= tipologia[0].id_tipologia %>')">
+                                        <p style="width: 200px; padding:10%"  class="bottone">AGGIUNGI SERVIZI</p>
+                                    </a>
+                                    <!--<button onclick="aggiungiServizi('<%= tipologia[0].id_tipologia %>')" class="bottone">Aggiungi servizi</button>-->
+                                </td>
+                                <td>
+                                    <a  onclick="elencoServizi('<%= tipologia[0].id_tipologia %>')">
+                                        <p style="width: 200px; padding:10%" class="bottone">ELENCO SERVIZI</p>
+                                    </a>
+                                    <!--<button onclick="elencoServizi('<%= tipologia[0].id_tipologia %>')" class="bottone">Elenco servizi</button>-->
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            
+            
         </form>
         <br>
-        <button onclick="eliminaTipologia('<%= tipologia[0].id_tipologia %>', '<%= tipologia[0].id_locale %>')" class="btn btn-primary">Elimina</button>
         <br><br>
-        <button onclick="aggiungiServizi('<%= tipologia[0].id_tipologia %>')" class="btn btn-primary">Aggiungi servizi</button>
+        
         <br><br>  
-        <button onclick="elencoServizi('<%= tipologia[0].id_tipologia %>')" class="btn btn-primary">Elenco servizi</button>
+        
     </main>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script>

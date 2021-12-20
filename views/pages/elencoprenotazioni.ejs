@@ -3,12 +3,39 @@
     <head>
         <meta content="../img/1.ico">
         <%- include('style');%>
-        <%- include('../partials/header');%>
     </head>
     <body style="text-align: center;">
         <div >
-        <h1  class="h1" type="text" >Book&Party</h1>
+        <h1  class="h1" type="text" >PRENOTAZIONI</h1>
         </div>
+
+
+
+        <!--Link home-->
+    <div style="text-align: center;">
+        <table style="margin: 0 auto; font-size: 80%;">
+          <tr>
+            <td style="min-width: 160px;">
+              <b><a href="/home" style="color:purple;text-decoration: none;">Homepage</a></b>
+            </td>
+            <td style="min-width: 120px;">
+              <a href="/profiloUtente" style="color:purple;text-decoration: none;"><b>Profilo</b></a>
+            </td>
+            <td style="min-width: 290px;">
+              <a href="/elencopre" style="color:purple;text-decoration: none;"><b>Prenotazioni effettuate</b></a>
+            </td>
+            <% if(isGestore == 1){%>
+              <td style="min-width: 150px;">
+                <a href="/locali" style="color:purple;text-decoration: none;"><b>Gestione locali</b></a>
+              </td>
+            <% } %>
+          </tr>
+        </table>
+      </div>
+    <!---->
+
+
+
         <%UTLOC.forEach(r=>{%>   
             <a href="infopren?id=<%=r.id_prenotazione%>&utente=<%=utente%>" style="color:black">
                     <div class="padding">

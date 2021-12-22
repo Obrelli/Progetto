@@ -348,12 +348,12 @@ app.get("/elencopre", (req,res)=>{
      
         if(!err){
             connection.query("SELECT * FROM id WHERE id_cliente='"+req.session.id_utente+"'", (err,PREN)=>{  
-            console.log(req.session.id_utente);
+            //console.log(req.session.id_utente);
 
             if(req.session.id_utente!=undefined){
 
             connection.query("SELECT id.id_locale, id_cliente, id_prenotazione,id.id_tipologia,data_prenotazione,id.quantita, nome_locale, nome_tipologia, costo FROM id,utente_locale,tipologia WHERE id.id_cliente='"+req.session.id_utente+"' && id.id_locale=utente_locale.id_locale && id.id_tipologia = tipologia.id_tipologia;", (err,UTLOC)=>{
-                console.log(PREN);
+                //console.log(PREN);
                 if(!err){       
                     UTLOC.forEach(r =>{
                         r.data_prenotazione=formatDate(r.data_prenotazione);
@@ -361,7 +361,7 @@ app.get("/elencopre", (req,res)=>{
                         res.status(200);
                         res.render("pages/elencoprenotazioni", {PREN,UTLOC, utente: req.session.id_utente});
                     }else{
-                        console.log("elenco prenotazioni- query error");
+                        //console.log("elenco prenotazioni- query error");
                         res.status(400);
                     }
                 })
@@ -497,15 +497,15 @@ app.get("/registrazioneUtente", function (req, res) {
 */
 
 app.get("/tipologie", async function (req, res) {
-    console.log(req.session)
+    //console.log(req.session)
     if(req.session.isLocale == 1){
       connection.query(
           `SELECT * FROM tipologia WHERE id_locale = "${req.session.id_utente}"`,
           (err, tipologie) => {
               if (err) throw err;
   
-              console.log("Data received from Db:");
-              console.log(tipologie);
+              //console.log("Data received from Db:");
+              //console.log(tipologie);
               res.render("pages/tipologie", { tipologie });
           }
       );
@@ -515,8 +515,8 @@ app.get("/tipologie", async function (req, res) {
           (err, tipologie) => {
               if (err) throw err;
   
-              console.log("Data received from Db:");
-              console.log(tipologie);
+              //console.log("Data received from Db:");
+              //console.log(tipologie);
               res.render("pages/tipologie", { tipologie });
           }
       );
@@ -677,14 +677,14 @@ app.get("/home", async function (req, res){
             }
         );
     } else {
-        console.log("QUESTO UTENTE È UN LOCALE");
+        //console.log("QUESTO UTENTE È UN LOCALE");
         connection.query(
             `SELECT * FROM utente_locale WHERE id_locale = "${req.session.id_utente}"`,
             (err, utente) => {
                 if (err) throw err;
 
-                console.log("Data received from Db:");
-                console.log(utente);
+                //console.log("Data received from Db:");
+                //console.log(utente);
                 res.render("pages/gestioneAccountLocale", { utente });
             }
         );
@@ -739,7 +739,7 @@ app.get("/aggiungiTipologia", async function (req, res) {
 */
 
 app.get("/modificaTipologia", async function (req, res) {
-    console.log(req.query.id);
+    //console.log(req.query.id);
     connection.query(
         `SELECT * FROM tipologia WHERE id_tipologia = "${req.query.id}"`,
         (err, tipologia) => {
@@ -780,7 +780,7 @@ app.get("/modificaTipologia", async function (req, res) {
 */
 
 app.delete("/eliminaTipologia", (req, res) => {
-    console.log("ID DA ELIMINARE " + req.query.idT);
+    //console.log("ID DA ELIMINARE " + req.query.idT);
     if(req.session.isTipoGestore == 1){
       connection.query(
           `DELETE FROM tipologia WHERE id_tipologia = "${req.query.idT}"`,
@@ -791,8 +791,8 @@ app.delete("/eliminaTipologia", (req, res) => {
                   (err, tipologie) => {
                       if (err) throw err;
 
-                      console.log("Data received from Db:");
-                      console.log(tipologie);
+                      //console.log("Data received from Db:");
+                      //console.log(tipologie);
                       res.render("pages/tipologie", { tipologie });
                   }
               );
@@ -803,7 +803,7 @@ app.delete("/eliminaTipologia", (req, res) => {
           `SELECT isGestore FROM tipologia WHERE id_tipologia = "${req.query.idT}"`,
           (err, risposta) => {
               if (err) throw err;
-              console.log(risposta[0].isGestore)
+              //console.log(risposta[0].isGestore)
               if(risposta[0].isGestore == 0){
                 connection.query(
                     `DELETE FROM tipologia WHERE id_tipologia = "${req.query.idT}"`,
@@ -814,22 +814,22 @@ app.delete("/eliminaTipologia", (req, res) => {
                             (err, tipologie) => {
                                 if (err) throw err;
 
-                                console.log("Data received from Db:");
-                                console.log(tipologie);
+                                //console.log("Data received from Db:");
+                                //console.log(tipologie);
                                 res.render("pages/tipologie", { tipologie });
                             }
                         );
                     }
                 );
               }else{
-                console.log("Solo il gestore può eliminare questa tipologia")
+                //console.log("Solo il gestore può eliminare questa tipologia")
                 connection.query(
                     `SELECT * FROM tipologia WHERE id_locale = "${req.query.idL}"`,
                     (err, tipologie) => {
                         if (err) throw err;
 
-                        console.log("Data received from Db:");
-                        console.log(tipologie);
+                        //console.log("Data received from Db:");
+                        //console.log(tipologie);
                         res.render("pages/tipologie", { tipologie });
                     }
                 );
@@ -840,7 +840,7 @@ app.delete("/eliminaTipologia", (req, res) => {
 });
 
 app.get("/aggiungiServizi", (req, res) => {
-    console.log(req.session);
+    //console.log(req.session);
     id_tipologia = req.query.id;
     res.render("pages/aggiungiServizio", { id_tipologia });
 });
@@ -867,7 +867,7 @@ app.get("/aggiungiServizi", (req, res) => {
 */
 
 app.get("/elencoServizi", async function (req, res) {
-    console.log(req.query.id);
+    //console.log(req.query.id);
     connection.query(
         `SELECT * FROM servizi WHERE id_tipologia = "${req.query.id}"`,
         (err, servizi) => {
@@ -936,8 +936,8 @@ app.get("/locali", async function (req, res) {
       (err, locali) => {
           if (err) throw err;
 
-          console.log("Data received from Db:");
-          console.log(locali);
+          //console.log("Data received from Db:");
+          //console.log(locali);
           res.render("pages/elencoLocali", { locali });
       }
   );
@@ -964,7 +964,7 @@ app.get("/locali", async function (req, res) {
 */
 
 app.get("/modificaLocale", async function (req, res) {
-  console.log(req.query.id);
+  //console.log(req.query.id);
   connection.query(
       `SELECT * FROM utente_locale WHERE id_locale = "${req.query.id}"`,
       (err, locale) => {
@@ -1044,8 +1044,8 @@ app.delete("/eliminaServizio", (req, res) => {
 */
 
 app.delete("/eliminaLocale", (req, res) => {
-    console.log(req.session);
-    console.log("ID DA ELIMINARE " + req.query.id);
+    //console.log(req.session);
+    //console.log("ID DA ELIMINARE " + req.query.id);
     connection.query(
         `DELETE FROM utente_locale WHERE id_locale = "${req.query.id}"`,
         (err, locale) => {
@@ -1055,8 +1055,8 @@ app.delete("/eliminaLocale", (req, res) => {
                 (err, locali) => {
                     if (err) throw err;
 
-                    console.log("Data received from Db:");
-                    console.log(locali);
+                    //console.log("Data received from Db:");
+                    //console.log(locali);
                     res.render("pages/elencoLocali", { locali });
                 }
             );
@@ -1105,13 +1105,13 @@ app.delete("/eliminaLocale", (req, res) => {
 */
 
 app.post("/modificaLocale/aggiorna", urlencodedParser, (req, res) => {
-    console.log("Aggiorna informazione locale");
-    console.log(req.body);
+    //console.log("Aggiorna informazione locale");
+    //console.log(req.body);
     connection.query(
         `UPDATE utente_locale SET nome_locale = "${req.body["nome"]}", email = "${req.body["email"]}", numero_telefono = "${req.body["numero_telefono"]}" WHERE id_locale = "${req.body["id_locale"]}"`,
         (err, res) => {
             if (err) throw err;
-            console.log("Last insert ID:", res.insertId);
+            //console.log("Last insert ID:", res.insertId);
         }
     );
     connection.query(
@@ -1119,8 +1119,8 @@ app.post("/modificaLocale/aggiorna", urlencodedParser, (req, res) => {
         (err, locali) => {
             if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(locali);
+            //console.log("Data received from Db:");
+            //console.log(locali);
             res.render("pages/elencoLocali", { locali });
         }
     );
@@ -1160,14 +1160,14 @@ app.post("/modificaLocale/aggiorna", urlencodedParser, (req, res) => {
 */
 
 app.post("/modificaServizio/aggiorna", urlencodedParser, (req, res) => {
-    console.log("Aggiorna informazione servizio");
-    console.log(req.body);
+    //console.log("Aggiorna informazione servizio");
+    //console.log(req.body);
     connection.query(
         `UPDATE servizi SET tipo_servizio = "${req.body["tipoServizio"]}", prezzo_servizio = "${req.body["prezzoServizio"]}"
         WHERE id_servizi = "${req.body["id_servizi"]}"`,
         (err, res) => {
             if (err) throw err;
-            console.log("Last insert ID:", res.insertId);
+            //console.log("Last insert ID:", res.insertId);
         }
     );
     connection.query(
@@ -1175,15 +1175,15 @@ app.post("/modificaServizio/aggiorna", urlencodedParser, (req, res) => {
         (err, tipologia) => {
             if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(tipologia[0].id_tipologia);
+            //console.log("Data received from Db:");
+            //console.log(tipologia[0].id_tipologia);
             connection.query(
                 `SELECT * FROM servizi WHERE id_tipologia = "${tipologia[0].id_tipologia}"`,
                 (err, servizi) => {
                     if (err) throw err;
 
-                    console.log("Data received from Db:");
-                    console.log(servizi);
+                    //console.log("Data received from Db:");
+                    //console.log(servizi);
                     res.render("pages/servizi", { servizi });
                 }
             );
@@ -1228,7 +1228,7 @@ app.post("/modificaServizio/aggiorna", urlencodedParser, (req, res) => {
 */
 
 app.post("/aggiungiServizio", urlencodedParser, (req, res) => {
-  console.log(req.body)
+  //console.log(req.body)
   var newServizio = {
       id_tipologia: req.body["id_tipologia"],
       tipo_servizio: req.body["tipoServizio"],
@@ -1237,15 +1237,15 @@ app.post("/aggiungiServizio", urlencodedParser, (req, res) => {
 
   connection.query("INSERT INTO servizi SET ?", newServizio, (err, rows) => {
       if (err) throw err;
-      console.log("Last insert ID:", rows.insertId);
+      //console.log("Last insert ID:", rows.insertId);
 
       connection.query(
           `SELECT * FROM servizi WHERE id_tipologia = "${req.body["id_tipologia"]}"`,
           (err, servizi) => {
               if (err) throw err;
 
-              console.log("Data received from Db:");
-              console.log(servizi);
+              //console.log("Data received from Db:");
+              //console.log(servizi);
               res.render("pages/servizi", { servizi });
           }
       );
@@ -1312,7 +1312,7 @@ app.post("/modificaTipologia/aggiorna", urlencodedParser, (req, res) => {
         WHERE id_tipologia = "${req.body["id_tipologia"]}"`,
         (err, res) => {
             if (err) throw err;
-            console.log("Last insert ID:", res.insertId);
+            //console.log("Last insert ID:", res.insertId);
         }
     );
     connection.query(
@@ -1320,8 +1320,8 @@ app.post("/modificaTipologia/aggiorna", urlencodedParser, (req, res) => {
         (err, tipologie) => {
             if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(tipologie);
+            //console.log("Data received from Db:");
+            //console.log(tipologie);
             res.render("pages/tipologie", { tipologie });
         }
     );
@@ -1381,7 +1381,7 @@ app.post("/gestioneAccount/aggiorna", urlencodedParser, (req, res) => {
         `UPDATE utente SET nome = "${req.body["nome"]}", cognome = "${req.body["cognome"]}", data_di_nascita = "${req.body["dataNascita"]}", email = "${req.body["email"]}",  numero_telefono = "${req.body["telefono"]}" WHERE id_utente = "${req.session.id_utente}"`,
         (err, res) => {
             if (err) throw err;
-            console.log("Last insert ID:", res.insertId);
+            //console.log("Last insert ID:", res.insertId);
         }
     );
 });
@@ -1426,13 +1426,13 @@ app.post("/gestioneAccount/aggiorna", urlencodedParser, (req, res) => {
 */
 
 app.post("/gestioneAccountLocale/aggiorna", urlencodedParser, (req, res) => {
-    console.log("Aggiorna informazione account");
-    console.log(req.body);
+    //console.log("Aggiorna informazione account");
+    //console.log(req.body);
     connection.query(
         `UPDATE utente_locale SET nome_locale = "${req.body["nome"]}", email = "${req.body["email"]}", numero_telefono = "${req.body["telefono"]}" WHERE id_locale = "${req.session.id_utente}"`,
         (err, res) => {
             if (err) throw err;
-            console.log("Last insert ID:", res.insertId);
+            //console.log("Last insert ID:", res.insertId);
         }
     );
 });
@@ -1507,17 +1507,17 @@ app.post("/api/registrazioneLocale", urlencodedParser, (req, res) => {
         newLocale,
         (err, res) => {
             if (err) throw err;
-            console.log("Last insert ID:", res.insertId);
+            //console.log("Last insert ID:", res.insertId);
         }
     );
 
     if (req.session["isTipoGestore"] == 0) {
-        console.log("Da non gestore a gestore");
+        //console.log("Da non gestore a gestore");
         connection.query(
             `UPDATE utente SET isTipoGestore = 1 WHERE id_utente = "${req.session.id_utente}"`,
             (err, res) => {
                 if (err) throw err;
-                console.log("Last insert ID:", res.insertId);
+                //console.log("Last insert ID:", res.insertId);
             }
         );
     }
@@ -1625,18 +1625,18 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
         (err, rows) => {
             // if (err) throw err;
 
-            console.log("Data received from Db:");
-            console.log(rows);
+            //console.log("Data received from Db:");
+            //console.log(rows);
 
             if (rows.length > 0) {
-                console.log("QUESTO UTENTE È UN CLIENTE/GESTORE");
+                //console.log("QUESTO UTENTE È UN CLIENTE/GESTORE");
                 req.session.login = true;
                 req.session.id_utente = rows[0]["id_utente"];
                 req.session.username = req.body["email"];
                 req.session.isLocale = 0;
                 req.session.isTipoGestore = rows[0]["isTipoGestore"];
                 app.locals.isGestoreGlobale = rows[0]["isTipoGestore"];
-                console.log(req.session);
+                //console.log(req.session);
                 //res.send("Logged in");
                 res.redirect("/homepage");
             } else {
@@ -1645,19 +1645,19 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
                     (err, rows) => {
                         // if (err) throw err;
 
-                        console.log("Data received from Db:");
-                        console.log(rows);
+                        //console.log("Data received from Db:");
+                        //console.log(rows);
 
                         if (rows.length > 0) {
-                            console.log("QUESTO UTENTE È UN LOCALE");
-                            console.log(rows[0]["id_locale"]);
+                            //console.log("QUESTO UTENTE È UN LOCALE");
+                            //console.log(rows[0]["id_locale"]);
                             req.session.login = true;
                             req.session.id_utente = rows[0]["id_locale"];
                             req.session.username = req.body["email"];
                             req.session.isLocale = 1;
                             req.session.isTipoGestore = 0;
                             app.locals.isGestoreGlobale = 2;
-                            console.log(req.session);
+                            //console.log(req.session);
                             // res.send("Logged in");
                             res.redirect("/homepageLocale");
                         } else {
@@ -1752,16 +1752,16 @@ app.post("/aggiungiTipologia", urlencodedParser, (req, res) => {
 
     connection.query("INSERT INTO tipologia SET ?", newLocale, (err, res) => {
         if (err) throw err;
-        console.log("Last insert ID:", res.insertId);
+        //console.log("Last insert ID:", res.insertId);
     });
 
     if (req.session["isTipoGestore"] == 0) {
-        console.log("Da non gestore a gestore");
+        //console.log("Da non gestore a gestore");
         connection.query(
             `UPDATE utente SET isTipoGestore = 1 WHERE id_utente = "${req.session.id_utente}"`,
             (err, res) => {
                 if (err) throw err;
-                console.log("Last insert ID:", res.insertId);
+                //console.log("Last insert ID:", res.insertId);
             }
         );
         connection.query(
@@ -1769,8 +1769,8 @@ app.post("/aggiungiTipologia", urlencodedParser, (req, res) => {
             (err, tipologie) => {
                 if (err) throw err;
 
-                console.log("Data received from Db:");
-                console.log(tipologie);
+                //console.log("Data received from Db:");
+                //console.log(tipologie);
                 res.render("pages/tipologie", { tipologie });
             }
         );
@@ -1780,8 +1780,8 @@ app.post("/aggiungiTipologia", urlencodedParser, (req, res) => {
           (err, tipologie) => {
               if (err) throw err;
 
-              console.log("Data received from Db:");
-              console.log(tipologie);
+              //console.log("Data received from Db:");
+              //console.log(tipologie);
               res.render("pages/tipologie", { tipologie });
           }
       );
@@ -1819,7 +1819,7 @@ app.get('/prenotazioni', async function(req, res) {
 
     var id_locale;
     if (req.session.isLocale == 1) id_locale = req.session.id_utente;
-        console.log(req.session.isLocale);
+        //console.log(req.session.isLocale);
         connection.query(`SELECT p.id_prenotazione, t.nome_tipologia, uc.cognome, p.data_prenotazione FROM prenotazione_tipologia_locale AS p, utente_locale AS ul, utente AS uc, tipologia AS t WHERE  ul.id_locale= "${id_locale}"AND p.id_locale = ul.id_locale AND p.id_cliente = uc.id_utente AND t.id_tipologia = p.id_tipologia;`,(err,prenotazioni)=> {
             if (err) { console.log(res.status(400)); throw err;}
             else {
@@ -1956,7 +1956,7 @@ app.delete('/prenotazioni/prenotazione_spec/annulla/', (req, res) => {
 */
 //elimina gestore
 app.delete('/eliminaGestore', (req,res) => {
-    console.log("è gestore: "+req.session.isTipoGestore);
+    //console.log("è gestore: "+req.session.isTipoGestore);
 
     connection.query(`DELETE FROM utente WHERE isTipoGestore = 1 AND id_utente = ?`,[req.session.id_utente], (err,cancellazione)=> {
         if (err) { console.log(res.status(400)); throw err;}

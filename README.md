@@ -10,9 +10,7 @@ A questo progetto hanno partecipato i seguenti collaboratori:
 * <b> Marco Antonini        </b>
 
 ## Struttura della Repository
-Questa repository di GitHub contiene il progetto dell'applicazione Book&Party. La repository è strutturata in questo modo:
-
-IMMAGINE?
+Questa repository di GitHub contiene il progetto dell'applicazione Book&Party.
 
 Nella repository si possono trovare:
 * i file per la gestione delle API locali: "server.js", "package.json" e "package-lock.json"

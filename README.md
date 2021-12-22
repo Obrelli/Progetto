@@ -21,7 +21,7 @@ Nella repository si possono trovare:
 
 ## Come eseguire il codice
 * Per eseguire il progetto basta richiamare il comando "npm start" all'interno della repository principale, dove è presente il file "server.js".
-* Per quanto riguarda il lato Client basta aprire nel browser il seguente URL, una volta avviato il comando sopra riportato: http://localhost:3535/
+* Per quanto riguarda il lato Client basta aprire nel browser il seguente URL, una volta avviato il comando sopra riportato: http://localhost:3535/, sarà necessario l'aiuto di un server apache e di un database, noi abbiamo utilizzato XAMPP.
 * Per il funzionamento completo dell'applicazione sarà necessario un database in MySql (per questo abbiamo caricato una copia nella repository).
 * Per visualizzare la documentazione delle API sviluppate basta invece apire nel browser, una volta avviato il comando specificato al primo punto, il seguente URL: http://localhost:3535/api-docs/
 * Per quanto riguarda il Testing delle API bisogna richiamare il comando "npm test" all'interno della repository principale, dove è presente il file "server.js".

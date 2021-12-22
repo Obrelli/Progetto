@@ -8,23 +8,16 @@
         <td style="min-width: 160px;">
           <b><a href="/home" style="color:purple;text-decoration: none;">Homepage</a></b>
         </td>
+        <% if(isGestoreGlobale == 1 || isGestoreGlobale==0){%>
         <td style="min-width: 120px;">
           <a href="/profiloUtente" style="color:purple;text-decoration: none;"><b>Profilo</b></a>
         </td>
-<<<<<<< HEAD
-        <% if(isGestore == 1 || isGestore==0){%>
-=======
-        <% if(isGestoreGlobale == 1 || isGestoreGlobale==0){%>
->>>>>>> 2b53aed8c766c96ec2b307e031601e50ce8edf88
+        
         <td style="min-width: 200px;">
           <a href="/elencopre" style="color:purple;text-decoration: none;"><b>Prenotazioni effettuate</b></a>
         </td>
         <%}%>
-<<<<<<< HEAD
-        <% if(isGestore == 1){%>
-=======
         <% if(isGestoreGlobale == 1){%>
->>>>>>> 2b53aed8c766c96ec2b307e031601e50ce8edf88
           <td style="min-width: 150px;">
             <a href="/locali" style="color:purple;text-decoration: none;"><b>Gestione locali</b></a>
           </td>

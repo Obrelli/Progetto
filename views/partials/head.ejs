@@ -11,10 +11,12 @@
         <td style="min-width: 120px;">
           <a href="/profiloUtente" style="color:purple;text-decoration: none;"><b>Profilo</b></a>
         </td>
+        <% if(isGestoreGlobale == 1 || isGestoreGlobale==0){%>
         <td style="min-width: 200px;">
           <a href="/elencopre" style="color:purple;text-decoration: none;"><b>Prenotazioni effettuate</b></a>
         </td>
-        <% if(isGestore == 1){%>
+        <%}%>
+        <% if(isGestoreGlobale == 1){%>
           <td style="min-width: 150px;">
             <a href="/locali" style="color:purple;text-decoration: none;"><b>Gestione locali</b></a>
           </td>

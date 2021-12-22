@@ -129,7 +129,8 @@ app.get('/ricerca', function(req,res){
                                         if(!err){
                                             connection.query("DROP VIEW BHO, ID;");
                                             res.status(200);
-                                            res.render("pages/locali", {città: req.query.città, np:req.query.np, n: n, r:r, rr:rr, idloc:rrr, rnp});     
+                                            var data = formatDate(req.query.data);
+                                            res.render("pages/locali", {città: req.query.città, np:req.query.np, n: n, r:r, rr:rr, idloc:rrr, rnp, data});     
                                         }else{
                                             console.log("error");
                                             res.status(400);
@@ -188,7 +189,7 @@ app.get('/info', (req,res) =>{
                             connection.query('SELECT DISTINCT id_tipologia, id_servizi, tipo_servizio, prezzo_servizio FROM servizi WHERE (id_tipologia IN (SELECT id_tipologia FROM bho WHERE id_locale="'+req.query.id+'"))', (err,r)=>{
                                 if(!err){
                                     //console.log(r);
-                                    connection.query("DROP VIEW BHO, ID;");
+                                    connection.query("DROP VIEW bho, id;");
                                     res.status(200);
                                     res.render('pages/infolocale', {rows,rr,r});
                                 }else{
@@ -575,11 +576,12 @@ app.get("/registrazioneLocale", async function (req, res) {
 */
 
 app.get("/home", async function (req, res){
+    isGestore = req.session.isTipoGestore;
+
     if(req.session.isLocale == 0){
-      isGestore = req.session.isTipoGestore;
       res.render("pages/homepage", { isGestore });
     }else{
-      res.render("pages/homepageLocale");
+      res.render("pages/homepageLocale", { isGestore });
     }
   })
   
@@ -1635,10 +1637,10 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
                 req.session.username = req.body["email"];
                 req.session.isLocale = 0;
                 req.session.isTipoGestore = rows[0]["isTipoGestore"];
+                app.locals.isGestoreGlobale = rows[0]["isTipoGestore"];
                 console.log(req.session);
                 //res.send("Logged in");
                 res.redirect("/homepage");
-
             } else {
                 connection.query(
                     `SELECT * FROM utente_locale WHERE email = "${req.body["email"]}" AND password = "${req.body["password"]}"`,
@@ -1656,6 +1658,7 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
                             req.session.username = req.body["email"];
                             req.session.isLocale = 1;
                             req.session.isTipoGestore = 0;
+                            app.locals.isGestoreGlobale = 0;
                             console.log(req.session);
                             // res.send("Logged in");
                             res.redirect("/homepageLocale");

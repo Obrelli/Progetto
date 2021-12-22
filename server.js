@@ -138,7 +138,7 @@ app.get('/ricerca', function(req,res){
                                     })
                                 }) 
                                 /*}else{
-                                    console.log("non va un cazzo");
+                                    
                                 }
                             })*/
                         }else{

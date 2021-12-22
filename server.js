@@ -17,8 +17,8 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerOptions = {
         swaggerDefinition: {
         info: {
-            title: "API D5 Progetto gruppo G31",
-            description: "API documentation",
+            title: "Book&Party",
+            description: "API documentation dell'applicazione Book&Party del Gruppo G31",
             contact: {
                 name: "Gruppo G31"
             },
@@ -576,12 +576,11 @@ app.get("/registrazioneLocale", async function (req, res) {
 */
 
 app.get("/home", async function (req, res){
-    isGestore = req.session.isTipoGestore;
 
     if(req.session.isLocale == 0){
-      res.render("pages/homepage", { isGestore });
+      res.render("pages/homepage");
     }else{
-      res.render("pages/homepageLocale", { isGestore });
+      res.render("pages/homepageLocale");
     }
   })
   
@@ -609,8 +608,7 @@ app.get("/home", async function (req, res){
   */
   
   app.get("/homepage", async function (req, res) {
-      isGestore = req.session.isTipoGestore
-      res.render("pages/homepage", {isGestore});
+      res.render("pages/homepage");
   });
   
   /**
@@ -1658,7 +1656,7 @@ app.post("/api/utenti/login", urlencodedParser, (req, res) => {
                             req.session.username = req.body["email"];
                             req.session.isLocale = 1;
                             req.session.isTipoGestore = 0;
-                            app.locals.isGestoreGlobale = 0;
+                            app.locals.isGestoreGlobale = 2;
                             console.log(req.session);
                             // res.send("Logged in");
                             res.redirect("/homepageLocale");
